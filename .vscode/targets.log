@@ -1,0 +1,439 @@
+D:\Minget\bin\make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.82.90
+# Built for i686-pc-mingw32
+# Copyright (C) 1988-2012 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+ 
+
+# Make data base, printed on Tue Aug 02 18:24:57 2022
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(patsubst %\,%,$(dir $<)))
+# automatic
+?F = $(notdir $?)
+# default
+.SHELLFLAGS := -c
+# makefile
+MAKEFLAGS = Rrqp
+# automatic
+?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
+# automatic
+@D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
+# environment
+HOMEDRIVE = C:
+# automatic
+@F = $(notdir $@)
+# automatic
+^D = $(patsubst %/,%,$(patsubst %\,%,$(dir $^)))
+# makefile
+CURDIR := c:/Users/asus/Desktop/SDL_widget
+# default
+SHELL := sh.exe
+# environment
+JRE_HOME = C:\Program Files\Java\jdk-18\jre
+# environment
+WINDIR = C:\WINDOWS
+# environment
+VSCODE_NLS_CONFIG = {"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"1d735750dbb1b9066c7513078396ba0f.zh-cn","_translationsConfigFile":"C:\\Users\\asus\\AppData\\Roaming\\Code\\clp\\1d735750dbb1b9066c7513078396ba0f.zh-cn\\tcf.json","_cacheRoot":"C:\\Users\\asus\\AppData\\Roaming\\Code\\clp\\1d735750dbb1b9066c7513078396ba0f.zh-cn","_resolvedLanguagePackCor 
+eLocation":"C:\\Users\\asus\\AppData\\Roaming\\Code\\clp\\1d735750dbb1b9066c7513078396ba0f.zh-cn\\3b889b090b5ad5793f524b5d1d39fda662b96a2a","_corruptedFile":"C:\\Users\\asus\\AppData\\Roaming\\Code\\clp\\1d735750dbb1b9066c7513078396ba0f.zh-cn\\corrupted.info","_languagePackSupport":true}
+# environment
+VBOX_MSI_INSTALL_PATH = D:\virtualbox\
+# environment
+ONEDRIVE = C:\Users\asus\OneDrive
+# makefile (from 'Makefile', line 7)
+SDL2_lib = "SDL2"
+# makefile (from 'Makefile', line 9)
+IMG_lib = "SDL2_image"
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;
+# makefile (from 'Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
+# environment
+TMP = C:\Users\asus\AppData\Local\Temp
+# makefile (from 'Makefile', line 3)
+Minget = "D:\\Minget\\lib"
+# environment
+PROGRAMW6432 = C:\Program Files
+# environment
+PROGRAMDATA = C:\ProgramData
+# environment
+VSCODE_CWD = D:\Microsoft VS Code
+# environment
+PATH = C:\Users\asus\AppData\Local\noteele\;C:\Program Files\Common Files\Oracle\Java\javapath;D:\Minget\bin;C:\Program Files (x86)\Python39-32\Scripts\;C:\Program Files (x86)\Python39-32\;C:\Program Files\Java\jdk-18\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Users\asus\AppData\Roaming\Python\Python39\Scripts;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files (x86)\EasyShare\x86\;C:\Program Files (x86)\EasyShare\x64\;C:\Program Files (x86)\Python39-32\Mudol;c:\program files (x86)\python39-32\Scripts;C:\Program Files\Common Files\Oracle\Java\javapath\jshell.exe;C:\Program Files\Java\jdk-16.0.2\bin;C:\Program Files\Java\jdk-16.0.2\lib;C:\Program Files (x86)\Python39-32;C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Python 3.9;E:\MiKTeX\miktex\bin\x64\;D:\Perl\c\bin;D:\Perl\perl\site\bin;D:\Perl\perl\bin;D:\Microsoft\AndroidSDK\25;%CC%;%CXX%;C:\Users\asus\Desktop\�����ĵ�\�ʵ�\dist;C:\Pr;gram Files (x86)\Python39-32;D:\SciCal\visual;D:\demo\bin;D:\Microsoft\AndroidSDK\25\platform-tools;E:\R-4.1.3\bin;E:\R-4.1.3\1386;D:\Microsoft\AndroidSDK\25\cmake\3.6.4111459\bin;D:\Microsoft\AndroidNDK64\android-ndk-r16b;E:\΢��web�����߹���\dll;E:\΢��w;b�����߹���;C:\P;ogram Files (x86)\Python39-32\Lib\swigwin-3.0.12\;E:\Git\cmd;D:\Microsoft VS Code\bin;C:\Users\asus\Downloads;
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# makefile (from 'Makefile', line 1)
+TTF = "D:\\Minget\\SDL_TTFmingw32\\lib"
+# environment
+ZES_ENABLE_SYSMAN = 1
+# environment
+PROCESSOR_ARCHITECTURE = x86
+# environment
+NDK = D:\Microsoft\AndroidNDK64\android-ndk-r16b
+# environment
+USERPROFILE = C:\Users\asus
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# environment
+NUMBER_OF_PROCESSORS = 4
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+MINGW_HOME = D:\Minget
+# default
+.FEATURES := target-specific order-only second-expansion else-if shorte 
+st-stem undefine oneshell archives jobserver
+# automatic
+%F = $(notdir $%)
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_2484_CRLTYELREKPOAQZX
+# environment
+COMPUTERNAME = LAPTOP-RGJE902I
+# environment
+PROGRAMFILES = C:\Program Files (x86)
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+USERNAME = asus
+# environment
+PUBLIC = C:\Users\Public
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensio 
+nHostProcess
+# environment
+C_INCLUDEDE_PATH = D:\Minget\include
+# environment
+PERL5LIB = D:/Perl/perl/bin\n\lib\perl5
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\asus\AppData\Roaming\Code\CachedData\3b889b090b5ad5793f524b5d1d39fda662b96a2a
+# environment
+JAVA_CLASS = C:\Program Files\Java\jdk-18\lib;
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
+# environment
+LOGONSERVER = \\LAPTOP-RGJE902I
+# environment
+ONEDRIVECONSUME 
+R = C:\Users\asus\OneDrive
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# environment
+USERDOMAIN = LAPTOP-RGJE902I
+# environment
+MAKELEVEL := 0
+# environment
+CMAKE = D:\Microsoft\AndroidSDK\25\cmake\3.6.4111459\bin
+# default
+MAKECMDGOALS := all
+# makefile (from 'Makefile', line 8)
+TTF_lib = "SDL2_ttf"
+# environment
+JAVA_HOME = C:\Program Files\Java\jdk-18
+# default
+MAKE_VERSION := 3.82.90
+# makefile
+.DEFAULT_GOAL := main.exe
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+PROGRAMFILES(X86) = C:\Progra 
+m Files (x86)
+# makefile (from 'Makefile', line 2)
+SDL2 = "D:\\Minget\\SDL2mingw32\\lib"
+# automatic
+%D = $(patsubst %/,%,$(patsubst %\,%,$(dir $%)))
+# environment
+LOCALAPPDATA = C:\Users\asus\AppData\Local
+# environment
+PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules;
+# default
+MAKE_COMMAND := D:/Minget/bin/make
+# environment
+PROCESSOR_ARCHITEW6432 = AMD64
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# makefile (from 'Makefile', line 4) 
+
+IMG = "D:\\Minget\\SDLimagemingw32\\lib"
+# environment
+PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 126 Stepping 5, GenuineIntel
+# environment
+OS = Windows_NT
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\4a2797659a0263af0c7c1500506c702e-1.69.2-main-sock
+# environment
+HOMEPATH = \Users\asus
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+PROMPT = $P$G
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(patsubst %\,%,$(dir $*)))
+# environment
+SYSTEMROOT = C:\WINDOWS
+# automatic
++D = $(patsubst %/,%,$(patsubst %\,%,$(dir $+)))
+# automatic
++F = $(notdir $+)
+# makefile (from 'Makefile', line 5)
+ming32_lib = "mingw32"
+# environment
+APPDATA = C:\Users\asus\AppData\Roaming
+# environment
+TEMP = C:\Users\asus\AppData\Local\Temp
+# environment
+COMSPEC = C:\WINDOWS\system32\cmd.exe
+# default
+MAKEFILES := 
+# makefile (from 'Makefile', line 6)
+SDL2main_lib = "SDL2main"
+# automatic
+<F = $(notdir $<)
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES : 
+= 
+# environment
+SYSTEMDRIVE = C:
+# environment
+SESSIONNAME = Console
+# environment
+PROCESSOR_REVISION = 7e05
+# default
+.RECIPEPREFIX := 
+# environment
+LANG = C
+# environment
+PROCESSOR_LEVEL = 6
+# environment
+VSCODE_PID = 2484
+# environment
+USERDOMAIN_ROAMINGPROFILE = LAPTOP-RGJE902I
+# variable set hash-table stats:
+# Load=103/1024=10%, Rehash=0, Collisions=15/121=12%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# ogram Files (x86)\Python39-32\Lib\swigwin-3.0.1 
+2\: could not be stat'd.
+# D:\Perl\perl\site\bin (key D:/Perl/perl/site/bin, mtime 1640935162): 2 files, no impossibilities.
+# D:\Minget\bin (key D:/Minget/bin, mtime 1654246669): 126 files, no impossibilities.
+# C:\Program Files (x86)\Python39-32\ (key C:/Program Files (x86)/Python39-32/, mtime 1657679995): 21 files, no impossibilities.
+# C:\Users\asus\Desktop\�����ĵ�\�ʵ�\dist (key C:/Users/asus/Desktop/�����ĵ�/�ʵ�/dist, mtime 1655182768): 22 files, no impossibilities.
+# D:\Microsoft\AndroidSDK\25\cmake\3.6.4111459\bin (key D:/Microsoft/AndroidSDK/25/cmake/3.6.4111459/bin, mtime 1648979641): 7 files, no impossibilities.
+# C:\Program Files (x86)\Python39-32\Scripts\ (key C:/Program Files (x86)/Python39-32/Scripts/, mtime 1657932096): 28 files, no impossibilities.
+# D:\demo\bin: could not be stat'd.
+# C:\Windows\System32\WindowsPowerShell\v1.0\ (key C:/Windows/System32/WindowsPowerShell/v1.0/, mtime 1619917525): 31 files, no impossibilities.
+# C:\WINDOWS\System32\Wbem (key C:/WINDOWS/System32/Wbem, mtime 1 
+658670386): 154 files, no impossibilities.
+# . (key c:/Users/asus/Desktop/SDL_widget, mtime 1659434981): 39 files, no impossibilities.
+# D:\Microsoft VS Code\bin (key D:/Microsoft VS Code/bin, mtime 1658239318): 4 files, no impossibilities.
+# C:\Users\asus\Downloads (key C:/Users/asus/Downloads, mtime 1659427527): 9 files, no impossibilities.
+# D:\SciCal\visual: could not be stat'd.
+# C:\Program Files\Java\jdk-18\bin (key C:/Program Files/Java/jdk-18/bin, mtime 1649407017): 124 files, no impossibilities.
+#  
+%CXX%: could not be stat'd.
+# C:\Program Files (x86)\EasyShare\x64\ (key C:/Program Files (x86)/EasyShare/x64/, mtime 1630213224): 4 files, no impossibilities.
+# b�����߹���: could not be stat'd.
+# C:\Windows\System32\OpenSSH\: could not be stat'd.
+# D:\Microsoft\AndroidSDK\25 (key D:/Microsoft/AndroidSDK/25, mtime 1648980080): 13 files, no impossibilities.
+# C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common (key C:/Program Files (x86)/NVIDIA Corporation/PhysX/Common, mtime 1584135617): 10 files, no im 
+possibilities.
+# C:\WINDOWS (key C:/WINDOWS, mtime 1640869308): 133 files, no impossibilities.
+# C:\Program Files\Java\jdk-16.0.2\bin (key C:/Program Files/Java/jdk-16.0.2/bin, mtime 1632387757): 123 files, no impossibilities.
+# C:\Users\asus\AppData\Roaming\Python\Python39\Scripts (key C:/Users/asus/AppData/Roaming/Python/Python39/Scripts, mtime 1646288546): 50 files, no impossibilities.
+# C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Python 3.9 (key C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Python 3.9, mtime 1637243042): 6 files, no impossibilities.
+# E:\R-4.1.3\1386: could not be stat'd.
+# C:\Users\asus\AppData\Local\noteele\ (key C:/Users/asus/AppData/Local/noteele/, mtime 1655463961): 9 files, no impossibilities.
+# C:\Windows (key C:/Windows, mtime 1640869308): 133 files, no impossibilities.
+# E:\MiKTeX\miktex\bin\x64\ (key E:/MiKTeX/miktex/bin/x64/, mtime 1640930380): 712 files, no impossibilities.
+# C:\Program Files\Java\jdk-16.0.2\lib (key C:/Program Files/Java/jdk-16.0.2/lib, mtime 1632387758): 18 files, no impossibilities.
+# E:\Git\cmd (key E:/Git/cmd, mtime 1659427721): 8 files, no impossibilities.
+# E:\΢��web�����߹���\dll (key E:/΢��web�����߹���/dll, mtime 1651668414): 9 files, no impossibilities.
+# C:\Program Files\Microsoft SQL Server\130\Tools\Binn\ (key C:/Program Files/Microsoft SQL Server/130/Tools/Binn/, mtime 1620301840): 4 files, no impossibilities.
+# C:\P: could not be stat'd.
+# C:\Windows\System32\Wbem (key C:/Windows/System32/Wbem, mtime 1658670386): 154 files, no i 
+mpossibilities.
+# D:\Perl\c\bin (key D:/Perl/c/bin, mtime 1640935166): 115 files, no impossibilities.
+# C:\Program Files (x86)\Python39-32\Mudol (key C:/Program Files (x86)/Python39-32/Mudol, mtime 1630375455): 2 files, no impossibilities.
+# c:\program files (x86)\python39-32\Scripts (key c:/program files (x86)/python39-32/Scripts, mtime 1657932096): 28 files, no impossibilities.
+# D:\Perl\perl\bin (key D:/Perl/perl/bin, mtime 1648344623): 185 files, no impossibilities.
+# %CC%: could not be stat'd.
+# D:\Mic 
+rosoft\AndroidSDK\25\platform-tools (key D:/Microsoft/AndroidSDK/25/platform-tools, mtime 1648880958): 16 files, no impossibilities.
+# C:\Program Files\Common Files\Oracle\Java\javapath (key C:/Program Files/Common Files/Oracle/Java/javapath, mtime 1649407020): 6 files, no impossibilities.
+# C:\Pr: could not be stat'd.
+# gram Files (x86)\Python39-32: could not be stat'd.
+# D:\Microsoft\AndroidNDK64\android-ndk-r16b (key D:/Microsoft/AndroidNDK64/android-ndk-r16b, mtime 1648881737): 20 files, no impossibilities.
+# E:\΢��w: could not be stat'd.
+# C:\WINDOWS\System32\WindowsPowerShell\v1.0\ (key C:/WINDOWS/System32/WindowsPowerShell/v1.0/, mtime 1619917525): 31 files, no impossibilities.
+# C:\Program Files\Common Files\Oracle\Java\javapath\jshell.exe (key C:/Program Files/Common Files/Oracle/Java/javapath/jshell.exe, mtime 1644890488): could not be opened.
+# C:\Windows\system32 (key C:/Windows/system32, mtime 1659094751): 3251 files, no impossibilities.
+# C:\Program Files (x86)\Python39-32 (key C:/Program Files (x86)/Python39-32, mtime 1657679995): 21 files, no impossibilities.
+# E:\R-4.1.3\bin (key E:/R-4.1.3/bin, mtime 1649051547): 6 files, no impossibilities.
+# C:\Program Files (x86)\EasyShare\x86\: could not be stat'd.
+# C:\WINDOWS\System32\OpenSSH\: could not be stat'd.
+# C:\WINDOWS\system32 (key C:/WINDOWS/system32, mtime 1659094751): 3251 files, no impossibilities.
+
+# 8885 files, no impossibilities in 54 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+all:
+#  Command line tar 
+get.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+.PHONY: clean
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+main.exe: SDLButton.o SDLColor.o SDLWindow.o main.o SDLObject.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 13):
+	g++ -o $@ $^ -L$(TTF) -L$(SDL2) -L$(Minget) -L$(IMG) -l$(ming32_lib) -l$(SDL2main_lib) -l$(SDL2_lib) -l$(TTF_lib) -l$(IMG_lib)
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-08-02 14:49:50
+#  File has been updated.
+#  Successfully updated.
+
+SDLObject.o: SDLObject.cpp
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 23):
+	g++ -c SDLObject.cpp
+
+# Not a target:
+main.cpp:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+SDLButton.o: SDLButton.cpp
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 17):
+	g++ -c SDLButton.cpp
+
+SDLColor.o: SDLColor.cpp
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 19):
+	g++ -c SDLColor.cpp
+
+# Not a target:
+SDLWindow.cpp:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+clean:
+#  Phony target (prerequisite of .PHONY).
+#  Implicit rule search has not been done.
+#  File does not exist.
+#  File has not been updated.
+#   
+recipe to execute (from 'Makefile', line 26):
+	del *.o *.exe
+
+# Not a target:
+SDLColor.cpp:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+main.o: main.cpp
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 15):
+	g++ -c main.cpp
+
+# Not a target:
+SDLObject.cpp:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+SDLButton.cpp:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+SDLWindow.o: SDLWindow.cpp
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 21):
+	g++ -c SDLWindow.cpp
+
+# files hash-table stats:
+# Load=17/1024=2%, Rehash=0, Collisions=2/44=5%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general (' 
+make: *** No rule to make target 'all'.  Stop.
+
+VPATH' variable) search path.
+
+# strcache buffers: 10 (9) / strings = 4948 / storage = 73965 B / avg = 14 B
+# current buf: size = 8174 B / used = 455 B / count = 31 / avg = 14 B
+# other used: total = 65791 B / count = 4917 / avg = 13 B
+# other free: total = 56 B / max = 13 B / min = 2 B / avg = 6 B
+
+# strcache performance: lookups = 8971 / hit rate = 44%
+# hash-table stats:
+# Load=4948/8192=60%, Rehash=0, Collisions=4272/8971=48%
+# Finished Make data base on Tue Aug 02 18:24:57 2022
+
+ 
