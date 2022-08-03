@@ -1,16 +1,10 @@
 D:\Minget\bin\make.exe --dry-run --always-make --keep-going --print-directory
 make: Entering directory 'c:/Users/asus/Desktop/SDL_widget'
 g++ -c SDLButton.cpp
- 
 g++ -c SDLColor.cpp
- 
 g++ -c SDLWindow.cpp
- 
 g++ -c main.cpp
- 
 g++ -c SDLObject.cpp
- 
 g++ -o main.exe SDLButton.o SDLColor.o SDLWindow.o main.o SDLObject.o -L"D:\\Minget\\SDL_TTFmingw32\\lib" -L"D:\\Minget\\SDL2mingw32\\lib" -L"D:\\Minget\\lib" -L"D:\\Minget\\SDLimagemingw32\\lib" -l"mingw32" -l"SDL2main" -l"SDL2" -l"SDL2_ttf" -l"SDL2_image"
- 
 make: Leaving directory 'c:/Users/asus/Desktop/SDL_widget'
  
