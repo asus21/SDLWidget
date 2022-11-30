@@ -5,6 +5,14 @@ from threading import Thread
 def prompt():
     print(">> ",end="")
 
+def connectShow(client):
+    txt='''
+    what do you want to do?\n
+    1. chat with friend\n
+    2. contact custoner service
+    '''.encode()
+    client.send(txt)
+
 def recvMsg(conn):
     global isrun
     while isrun:
