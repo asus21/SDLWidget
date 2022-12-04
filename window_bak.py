@@ -7,14 +7,8 @@ class Window:
         self.x=x
         self.y=y
         self.win=curses.newwin(h,w,y,x)
-        self.sub_y=self.y+2
-        self.sub_x=self.x+1
-        self.sub_w=self.w-2
-        self.sub_h=self.h-3
-        self.subwin=self.win.subwin(self.sub_h,self.sub_w,self.sub_y,self.sub_x)
         self.cur_x=0
-        self.cur_y=0
-        self.scroll=0
+        self.cur_y=w
     def addstr(self,y,x,str):
         self.win.addstr(y,x,str)
         self.cur_x+=1
@@ -35,10 +29,10 @@ class Window:
         self.msg=[]
         row=self.cur_y
         col=self.cur_x
-        self.subwin.scrollok(True)
-        self.subwin.setscrreg(0,self.sub_h-1)
+        self.win.scrollok(True)
+        self.win.setscrreg(2,self.h-1)
         if self.onfocus():
-            self.subwin.move(row,col)   
+            self.win.move(row,col)   
             if event==ord("\n"):
                 row+=1
                 col=1
@@ -50,33 +44,23 @@ class Window:
                 col+=1
             elif event==curses.KEY_DOWN:
                 row+=1
-            elif event==127:
-                col-=1
-                if col>0:
-                    self.subwin.delch(row,col)
             else:
                 self.msg.append(chr(event)) 
-                self.subwin.addstr(row,col,chr(event))
+                self.win.addstr(row,col,chr(event))
                 col+=1
-            if col+1>=self.sub_w:
+            if col+1>=self.w:
                 row+=1
                 col=1
             if col<1:
                 row-=1
-                if row>0:
-                    col=self.sub_w-1
-                else:
-                    col=1
-            if row>=self.sub_h:
-                row=self.sub_h-1
-                self.subwin.scroll(1)
-                self.scroll+=1
-            if row<0:
-                row=0
-                if self.scroll>0:
-                    self.subwin.scroll(-1)
-                    self.scroll-=1
-            self.subwin.move(row,col)
-            self.subwin.refresh()
+                col=1
+            if row>=self.h:
+                row=self.h-1
+                self.win.scroll(1)
+            if row<2:
+                row=2
+                self.win.scroll(-1)
+            self.win.move(row,col)
+            self.win.refresh()
             self.cur_y=row
             self.cur_x=col       
