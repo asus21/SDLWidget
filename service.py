@@ -2,7 +2,12 @@ import socket
 import sys
 import re
 from threading import Thread
-
+class Service:
+    def __init__(self,addr,port):
+        self.addr=addr
+        self.port=port
+        self.sevice=socket.socket()
+    
 def connectShow(client):
     txt='''
     what do you want to do?\n
@@ -80,16 +85,10 @@ def serviceIn():
                 for i in client:
                     i.send(" ".join(temp[0:]).encode())
                     prompt()
-                    #td=Thread(target=prompt)
-                    #td.start()
-                    #td.join()
             else:
                 index=int(temp[0])-1
                 client[index].send(text.encode())
                 prompt()
-                #td=Thread(target=prompt)
-                #td.start()
-                #td.join()
         except:
             prompt()
         

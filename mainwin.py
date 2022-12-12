@@ -54,94 +54,23 @@ class window:
             else:
                 Thread(target=self.input_window.event,args=(ch,)).start()
                 Thread(target=self.output_window.event,args=(ch,)).start()
-try:
-    isRun=True
-    win=window()
-    win.creat_head()
-    win.creat_input()
-    win.creat_output()
-    win.create_right()
-    win.head_refresh()
-    win.input_refresh()
-    win.output_refresh()
-    win.right_refresh()
-    curses.setsyx(0,0)
-    win.root_event()
-except Exception as e:
-    raise e
-finally:
-    win.close()
-'''
-stdscr = curses.initscr()
-newwin=curses.newwin(10,10,0,0)
-def display_info(str, x, y, colorpair=2):
-      
-    global stdscr,newwin
-    
-    newwin.addstr(y, x,str, curses.color_pair(colorpair))
-    newwin.refresh()
-def get_key():
-    
-    global stdscr
-    if stdscr.getkey()==curses.KEY_ENTER:
-        return True
-    else:
-        return False
 
-def get_ch_and_continue():
-    global stdscr
-    #设置nodelay，为0时会变成阻塞式等待
-    mes=[]
-    row=0
-    col=0
-    stdscr.nodelay(0)
-    #输入一个字符
-    while True: 
-        ch=stdscr.getch()
-        if ch==ord("\x1b"):
-            break
-        elif ch==ord("\n"):
-            row+=1
-            col=0
-            stdscr.move(row,col)
-        else:
-            display_info(chr(ch),col,row,2)
-            mes.append(ch)
-            col+=1
-    #重置nodelay,使得控制台可以以非阻塞的方式接受控制台输入，超时1秒
-#    stdscr.nodelay(1)
-    return True
-
-def set_win():
-    global stdscr,newwin
-    #使用颜色首先需要调用这个方法
-    curses.start_color()
-    #文字和背景色设置，设置了两个color pair，分别为1和2
-    curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
-    curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
-    #关闭屏幕回显
-    curses.noecho()
-    stdscr.box(".",".")
-    newwin.box(".",".")
-    #输入时不需要回车确认
-#    curses.cbreak()
-    #设置nodelay，使得控制台可以以非阻塞的方式接受控制台输入，超时1秒
-    stdscr.nodelay(1)
-
-def unset_win():
-    global stdstr
-    #恢复控制台默认设置（若不恢复，会导致即使程序结束退出了，控制台仍然是没有回显的）
-    curses.nocbreak()
-    stdscr.keypad(0)
-    curses.echo()
-    #结束窗口
-    curses.endwin()
-if __name__=='__main__':
+if __name__=="__main__":
     try:
-        set_win()
-        get_ch_and_continue()
+        isRun=True
+        win=window()
+        win.creat_head()
+        win.creat_input()
+        win.creat_output()
+        win.create_right()
+        win.head_refresh()
+        win.input_refresh()
+        win.output_refresh()
+        win.right_refresh()
+        curses.setsyx(0,0)
+        win.root_event()
     except Exception as e:
         raise e
     finally:
-        unset_win()
-'''
+        win.close()
+

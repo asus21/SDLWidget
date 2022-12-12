@@ -1,5 +1,4 @@
 import curses
-
 class Window:
     def __init__(self,h,w,y,x):
         self.w=w
@@ -15,6 +14,9 @@ class Window:
         self.cur_x=0
         self.cur_y=0
         self.scroll=0
+        self.msg=[""]
+        self.top=[]
+        self.bottom=[]
     def addstr(self,y,x,str):
         self.win.addstr(y,x,str)
         self.cur_x+=1
@@ -32,51 +34,119 @@ class Window:
         else:
             return False
     def event(self,event):
-        self.msg=[]
         row=self.cur_y
         col=self.cur_x
         self.subwin.scrollok(True)
         self.subwin.setscrreg(0,self.sub_h-1)
+        self.subwin.move(row,col)   
         if self.onfocus():
-            self.subwin.move(row,col)   
             if event==ord("\n"):
                 row+=1
                 col=1
+                if row>=self.sub_h-1:
+                    self.top.append(self.msg[self.scroll])
+                    row=self.sub_h-1
+                    self.subwin.scroll(1)
+                    if self.bottom:
+                        txt=self.bottom.pop()
+                        self.subwin.insstr(row,1,txt)
+                    self.scroll+=1
+                if len(self.msg)<=row+self.scroll:
+                    self.msg.append("")
             elif event==curses.KEY_UP:
-                row=row-1
+                if row+self.scroll>0:
+                    row=row-1
+                if row<0:
+                    row=0
+                    if self.scroll>0:
+                        self.subwin.scroll(-1)
+                        self.bottom.append(self.msg[-1-len(self.bottom)])
+                        if len(self.top)>0:
+                            txt=self.top.pop()
+                            self.subwin.insstr(row,1,txt)
+                        self.scroll-=1
+                if col>len(self.msg[row+self.scroll]):
+                    col=len(self.msg[row+self.scroll])+1
             elif event==curses.KEY_LEFT:
                 col=col-1
+                if col<1 and row+self.scroll>0:
+                    row=row-1
+                    if row<0:
+                        row=0
+                        if self.scroll>0:
+                            self.subwin.scroll(-1)
+                            self.bottom.append(self.msg[-1-len(self.bottom)])
+                            if len(self.top)>0:
+                                txt=self.top.pop()
+                                self.subwin.insstr(row,1,txt)
+                            self.scroll-=1
+                    col=len(self.msg[self.scroll+row])+1
+                if col==0 and row+self.scroll==0:
+                    col=1
             elif event==curses.KEY_RIGHT:
-                col+=1
+                if col<len(self.msg[row+self.scroll])+1:
+                    col+=1
+                if col>=len(self.msg[row+self.scroll])+1 and row+self.scroll+1<len(self.msg):
+                    row=row+1
+                    if row>=self.sub_h:
+                        row=self.sub_h-1
+                        self.top.append(self.msg[self.scroll])
+                        row=self.sub_h-1
+                        self.subwin.scroll(1)
+                        if self.bottom:
+                            txt=self.bottom.pop()
+                            self.subwin.insstr(row,1,txt)
+                        self.scroll+=1
+                    col=1
+                elif col>=len(self.msg[row+self.scroll])+1:
+                    col=len(self.msg[row+self.scroll])+1
             elif event==curses.KEY_DOWN:
-                row+=1
+                if row+self.scroll<len(self.msg)-1:
+                    row+=1
+                if row>=self.sub_h:
+                    self.top.append(self.msg[self.scroll])
+                    row=self.sub_h-1
+                    self.subwin.scroll(1)
+                    if self.bottom:
+                        txt=self.bottom.pop()
+                        self.subwin.insstr(row,1,txt)
+                    self.scroll+=1
+                if col>len(self.msg[row+self.scroll]):
+                    col=len(self.msg[row+self.scroll])+1
             elif event==127:
                 col-=1
-                if col>0:
-                    self.subwin.delch(row,col)
-            else:
-                self.msg.append(chr(event)) 
-                self.subwin.addstr(row,col,chr(event))
-                col+=1
-            if col+1>=self.sub_w:
-                row+=1
-                col=1
-            if col<1:
-                row-=1
-                if row>0:
-                    col=self.sub_w-1
-                else:
+                if col<1 and row+self.scroll>0:
+                    row=row-1
+                    if row<0:
+                        row=0
+                        if self.scroll>0:
+                            self.subwin.scroll(-1)
+                            self.bottom.append(self.msg[-1-len(self.bottom)])
+                            if len(self.top)>0:
+                                txt=self.top.pop()
+                                self.subwin.insstr(row,1,txt)
+                            self.scroll-=1
+                    col=len(self.msg[self.scroll+row])+1
+                    tmp=self.msg[self.scroll+row]
+                    self.msg[self.scroll+row]=tmp+self.msg[self.scroll+row+1]
+                    if self.scroll+row!=0:
+                        del self.msg[self.scroll+row+1]
+                    self.subwin.deleteln()
+                    self.subwin.addstr(row,1,self.msg[self.scroll+row])
+                elif col==0 and self.scroll+row==0:
                     col=1
-            if row>=self.sub_h:
-                row=self.sub_h-1
-                self.subwin.scroll(1)
-                self.scroll+=1
-            if row<0:
-                row=0
-                if self.scroll>0:
-                    self.subwin.scroll(-1)
-                    self.scroll-=1
-            self.subwin.move(row,col)
+                else:
+                    self.subwin.delch(row,col)
+                    tmp=self.msg[self.scroll+row]
+                    self.msg[self.scroll+row]=tmp[:col-1]+tmp[col:]
+            else:
+                if len(self.msg)<=row+self.scroll:
+                    self.msg.append(chr(event)) 
+                else:
+                    self.msg[row+self.scroll]+=chr(event)
+                self.subwin.addch(row,col,chr(event))
+                col+=1
+            self.subwin.move(row,col)   
             self.subwin.refresh()
             self.cur_y=row
             self.cur_x=col       
