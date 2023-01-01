@@ -2,16 +2,16 @@
 import curses
 from threading import Thread
 import time
-from textwindow import TextWindow
-from login import LoginWin
-class window:
+from textWindow import TextWindow
+from login import LoginWindow
+class MainWindow:
     def __init__(self):
         self.root=curses.initscr()
         curses.noecho()
         curses.cbreak()
         self.h,self.w=self.root.getmaxyx()
     def create_login(self):
-        self.login=LoginWin(self.h,self.w,0,0)
+        self.login=LoginWindow(self.h,self.w,0,0)
     def creat_head(self):
         self.head_window=TextWindow(self.root,4,self.w,0,0)
         self.head_window.box(".",".")
@@ -57,13 +57,14 @@ class window:
                 _,x,y,_,n=curses.getmouse()
                 self.root.move(y,x)
             else:
-                Thread(target=self.input_window.event,args=(ch,)).start()
-                Thread(target=self.output_window.event,args=(ch,)).start()
+                Thread(target=self.login.event,args=(ch,)).start()
+#                Thread(target=self.input_window.event,args=(ch,)).start()
+#                Thread(target=self.output_window.event,args=(ch,)).start()
 
 if __name__=="__main__":
     try:
         isRun=True
-        win=window()
+        win=MainWindow()
         win.create_login()
 
         win.login_refresh()
