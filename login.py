@@ -34,9 +34,11 @@ class LoginWindow():
         self.window.refresh()
         self.subwin.refresh()
     def event(self,event):
+        if event==curses.KEY_UP:
+            pass
+        if event==curses.KEY_DOWN:
+            pass
         self.user_text.event(event)
         self.password_text.event(event)
-#        self.window.refresh()
-#        self.subwin.refresh()
 
 
