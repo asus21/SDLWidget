@@ -1,5 +1,4 @@
 import curses
-from curses import textpad
 class EditText:
     def __init__(self,top,h,w,y,x):
         self.top=top
@@ -55,37 +54,33 @@ class EditText:
                 self.light=True
             self.editText.move(row,col)
             if isinstance(event,int):
-                if event==curses.KEY_MOUSE:
-                    pass
-                elif event==ord("\n"):
-                    pass
-                elif event==curses.KEY_LEFT:
-                    if col>0:
-                        if len(self.msg)>0:
-                            self.str_x-=1
-                            col=col-len(self.msg[self.str_x].encode('gbk'))
-                elif event==curses.KEY_RIGHT:
-                    if self.str_x>=len(self.msg)-1:
-                        pass
-                    else:
-                        self.str_x+=1
-                        col+=len(self.msg[self.str_x].encode('gbk'))
-#                    if col>=self.w-3:
-#                        col=self.w-3
-                    if col>=len(self.msg):
-                        col=len(self.msg.encode('gbk'))
-            else:
-                if ord(event)==127:
-                    if col>0:
-                        if len(self.msg)>0:
-                            self.str_x-=1
+                if event==curses.KEY_LEFT:
+                    if col>0 and self.str_x>0:
+                        self.str_x-=1
                         col=col-len(self.msg[self.str_x].encode('gbk'))
-                        self.editText.delch(row,col)
+                elif event==curses.KEY_RIGHT:
+                    if col<self.w-3 and self.str_x<len(self.msg):
+                        col=col+len(self.msg[self.str_x].encode('gbk'))
+                        self.str_x+=1
+#                        self.editText.addstr(0,0,str(col)+" "+str(self.str_x)+" "+str(len(self.msg)))
+            else:
+                if event=="\n":
+                    pass
+                elif ord(event)==127:
+                    if col>0 and self.str_x>0:
+                        self.str_x-=1
+                        if len(self.msg[self.str_x].encode('gbk'))==1:
+                            self.editText.delch(row,col-1)
+                            col-=1
+                        else:
+                            self.editText.delch(row,col-1)
+                            self.editText.delch(row,col-2)
+                            col-=2
                         self.msg=self.msg[0:self.str_x]+self.msg[self.str_x+1:]
                 else:
                     if len(event.encode('gbk'))+len(self.msg.encode('gbk'))>=self.w-3:
                         event=event[0:-1]
-                    if col<self.w-3:
+                    if col<self.w-2:
                         self.msg+=event
                         self.editText.addstr(row,col,event)
                         col+=len(event.encode('gbk'))
