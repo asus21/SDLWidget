@@ -13,6 +13,7 @@ class EditText:
         self.msg=""
         self.cur_y=0
         self.cur_x=0
+        self.str_x=0
     def highlight(self):
         y,x=curses.getsyx()
         curses.init_pair(1,curses.COLOR_RED,0)
@@ -53,34 +54,42 @@ class EditText:
                 self.highlight()
                 self.light=True
             self.editText.move(row,col)
-            if event==curses.KEY_MOUSE:
-                pass
-            elif event==ord("\n"):
-                pass
-            elif event==curses.KEY_LEFT:
-                col=col-1
-                if col<=1:
-                    col=0
-            elif event==curses.KEY_RIGHT:
-                col+=1
-                if col>=self.w-3:
-                    col=self.w-3
-                elif col>=len(self.msg):
-                    col=len(self.msg)
-            elif ord(str(event))==127:
-                
-                if col>0:
-                    col-=1
-                    self.editText.delch(row,col)
-                    self.msg=self.msg[0:col]+self.msg[col+1:]
-                self.editText.addstr(0,0,str(event))
+            if isinstance(event,int):
+                if event==curses.KEY_MOUSE:
+                    pass
+                elif event==ord("\n"):
+                    pass
+                elif event==curses.KEY_LEFT:
+                    if col>0:
+                        if len(self.msg)>0:
+                            self.str_x-=1
+                            col=col-len(self.msg[self.str_x].encode('gbk'))
+                elif event==curses.KEY_RIGHT:
+                    if self.str_x>=len(self.msg)-1:
+                        pass
+                    else:
+                        self.str_x+=1
+                        col+=len(self.msg[self.str_x].encode('gbk'))
+#                    if col>=self.w-3:
+#                        col=self.w-3
+                    if col>=len(self.msg):
+                        col=len(self.msg.encode('gbk'))
             else:
-                if len(event.encode('gbk'))+len(self.msg.encode('gbk'))>=self.w-3:
-                    event=event[0:-1]
-                if col<self.w-3:
-                    self.msg+=event
-                    self.editText.addstr(row,col,event)
-                    col+=len(event.encode('gbk'))
+                if ord(event)==127:
+                    if col>0:
+                        if len(self.msg)>0:
+                            self.str_x-=1
+                        col=col-len(self.msg[self.str_x].encode('gbk'))
+                        self.editText.delch(row,col)
+                        self.msg=self.msg[0:self.str_x]+self.msg[self.str_x+1:]
+                else:
+                    if len(event.encode('gbk'))+len(self.msg.encode('gbk'))>=self.w-3:
+                        event=event[0:-1]
+                    if col<self.w-3:
+                        self.msg+=event
+                        self.editText.addstr(row,col,event)
+                        col+=len(event.encode('gbk'))
+                        self.str_x+=1
             self.editText.move(row,col)   
             self.editText.refresh()
             self.cur_y=row
