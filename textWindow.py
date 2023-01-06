@@ -1,6 +1,6 @@
 import curses
 class TextWindow:
-    def __init__(h,w,y,x):
+    def __init__(self,h,w,y,x):
         self.h,self.w=h,w
         self.y,self.x=y,x
         self.win=curses.newwin(h,w,y,x)

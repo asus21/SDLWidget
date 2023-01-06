@@ -13,6 +13,8 @@ class MainWindow:
         curses.cbreak()
         curses.start_color()
         self.h,self.w=self.root.getmaxyx()
+        self.login=None
+        self.input_window=None
     def create_login(self):
         self.login=LoginWindow(self.h,self.w,0,0)
     def creat_head(self):
@@ -24,7 +26,7 @@ class MainWindow:
         self.output_window.box(".",".")
         self.output_window.addstr(1,0,"output:")
     def creat_input(self):
-        self.input_window=TextWindow(int((self.h-5)/2),int(self.w/2),5+int((self.h-5)/2+1),int(self.w/2))
+        self.input_window=TextWindow(int((self.h-5)/2),int(self.w/2),5+int((self.h-5)/2),int(self.w/2))
         self.input_window.box(".",".")
         self.input_window.addstr(1,0,"intput:")
     def create_right(self):
@@ -53,36 +55,40 @@ class MainWindow:
         while True:
             ch=self.root.get_wch()
 #            ch=self.root.getch()
-            if ch==ord("\x1b"):
-                self.close()
-                break
-            elif ch==curses.KEY_MOUSE:
-                _,x,y,_,n=curses.getmouse()
-                self.root.move(y,x)
-                self.root.refresh()
-                self.login.event(ch)
-                
+            if isinstance(ch,str):
+                if ord(ch)==ord("\x1b"):
+                    self.close()
+                    break
             else:
-                self.login.event(ch)
-#                Thread(target=self.login.event,args=(ch,)).start()
-#                Thread(target=self.input_window.event,args=(ch,)).start()
-#                Thread(target=self.output_window.event,args=(ch,)).start()
+                if ch==curses.KEY_MOUSE:
+                    _,x,y,_,n=curses.getmouse()
+                    self.root.move(y,x)
+                    self.root.refresh()
+                    if self.login:
+                        self.login.event(ch)
+                
+                else:
+                    if self.login:
+                        Thread(self.login.event,args=(ch,)).start()
+                    if self.input_window:    
+                        Thread(target=self.input_window.event,args=(ch,)).start()
+                        Thread(target=self.output_window.event,args=(ch,)).start()
 
 if __name__=="__main__":
     try:
         isRun=True
         win=MainWindow()
-        win.create_login()
-        win.login_refresh()
-#        win.creat_head()
-#        win.creat_input()
-#        win.creat_output()
-#        win.create_right()
-#        win.head_refresh()
-#        win.input_refresh()
-#        win.output_refresh()
-#        win.right_refresh()
-        curses.setsyx(0,0)
+#        win.create_login()
+#        win.login_refresh()
+        win.creat_head()
+        win.creat_input()
+        win.creat_output()
+        win.create_right()
+        win.head_refresh()
+        win.input_refresh()
+        win.output_refresh()
+        win.right_refresh()
+#        curses.setsyx(0,0)
         win.root_event()
     except Exception as e:
         raise e

@@ -78,13 +78,20 @@ class EditText:
                             col-=2
                         self.msg=self.msg[0:self.str_x]+self.msg[self.str_x+1:]
                 else:
-                    if len(event.encode('gbk'))+len(self.msg.encode('gbk'))>=self.w-3:
-                        event=event[0:-1]
-                    if col<self.w-2:
-                        self.msg+=event
-                        self.editText.addstr(row,col,event)
-                        col+=len(event.encode('gbk'))
-                        self.str_x+=1
+#                    self.editText.addstr(0,0,str(col)+" "+str(self.str_x)+" "+str(len(self.msg)))
+                    if col<self.w-3:
+                        if len(self.msg.encode('gbk'))+len(event.encode('gbk'))<self.w-3:
+                            if self.str_x<len(self.msg):
+                                self.msg=self.msg[0:self.str_x]+event+self.msg[self.str_x:]
+                                self.editText.insstr(row,col,event)
+                                col+=len(event.encode('gbk'))
+                                self.str_x+=1
+                            else:
+                                self.msg+=event
+                                self.editText.addstr(row,col,event)
+                                col+=len(event.encode('gbk'))
+                                self.str_x+=1
+#                            self.editText.addstr(0,0,str(col)+" "+str(self.str_x)+" "+str(len(self.msg)))
             self.editText.move(row,col)   
             self.editText.refresh()
             self.cur_y=row
