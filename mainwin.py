@@ -55,24 +55,21 @@ class MainWindow:
         while True:
             ch=self.root.get_wch()
 #            ch=self.root.getch()
-            if isinstance(ch,str):
-                if ord(ch)==ord("\x1b"):
-                    self.close()
-                    break
+            if ch=="\x1b":
+                self.close()
+                break
+            if ch==curses.KEY_MOUSE:
+                _,x,y,_,n=curses.getmouse()
+                self.root.move(y,x)
+                self.root.refresh()
+                if self.login:
+                    self.login.event(ch)
             else:
-                if ch==curses.KEY_MOUSE:
-                    _,x,y,_,n=curses.getmouse()
-                    self.root.move(y,x)
-                    self.root.refresh()
-                    if self.login:
-                        self.login.event(ch)
-                
-                else:
-                    if self.login:
-                        Thread(self.login.event,args=(ch,)).start()
-                    if self.input_window:    
-                        Thread(target=self.input_window.event,args=(ch,)).start()
-                        Thread(target=self.output_window.event,args=(ch,)).start()
+                if self.login:
+                    Thread(self.login.event,args=(ch,)).start()
+                if self.input_window:    
+                    Thread(target=self.input_window.event,args=(ch,)).start()
+                    Thread(target=self.output_window.event,args=(ch,)).start()
 
 if __name__=="__main__":
     try:
