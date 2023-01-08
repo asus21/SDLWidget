@@ -64,13 +64,15 @@ class MainWindow:
                 self.root.refresh()
                 if self.login:
                     self.login.event(ch)
+                if self.input_window:
+                    self.input_window.event(ch)
+                    self.output_window.event(ch)
             else:
                 if self.login:
                     Thread(self.login.event,args=(ch,)).start()
-                if self.input_window:    
+                if self.input_window:   
                     Thread(target=self.input_window.event,args=(ch,)).start()
                     Thread(target=self.output_window.event,args=(ch,)).start()
-
 if __name__=="__main__":
     try:
         isRun=True
