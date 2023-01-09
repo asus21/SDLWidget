@@ -1,19 +1,21 @@
 import curses
 from editText import EditText
 from label import Label
+radio_h=0.6
+radio_w=0.8
+login_text="logining"
+#        login_text=u"登录"
+login_user="user:"
+login_password="password:"
+login_register="register"
+
 class LoginWindow():
     def __init__(self,h,w,y,x):
-        radio_h=0.6
-        radio_w=0.8
-        login_text="logining"
-#        login_text=u"登录"
-        login_user="user:"
-        login_password="password:"
-        login_register="register"
         self.h=h
         self.w=w
         self.y=y
         self.x=x
+        self.count=0
         self.sub_h=int(h*radio_h)
         self.sub_w=int(w*radio_w)
         self.sub_y=int((1-radio_h)/2*h)
@@ -35,17 +37,41 @@ class LoginWindow():
         self.window.refresh()
         self.subwin.refresh()
     def event(self,event):
-        count=0
-        if event==curses.KEY_UP:
-            count-=1
-            if count<0:
-                count=0
-        elif event==curses.KEY_DOWN:
-            count+=1
-            if count>3:
-                count=3
-        else:
-            self.user_text.event(event)
-            self.password_text.event(event)
-            self.register_label.event(event)
-            self.login_label.event(event)
+        if event!=curses.KEY_MOUSE:
+            if event==curses.KEY_UP:
+                self.count-=1
+                if self.count<0:
+                    self.count=0
+            elif event==curses.KEY_DOWN:
+                self.count+=1
+                if self.count>3:
+                    self.count=3
+            if self.count==0:
+                curses.curs_set(1)
+                self.subwin.move(int(self.sub_h/4)-1,int(self.sub_w/5)+len(login_password)+4)
+                self.subwin.refresh()
+            elif self.count==1:
+                curses.curs_set(1)
+                self.subwin.move(2*int(self.sub_h/4)-1,int(self.sub_w/5)+len(login_password)+3)
+                self.subwin.refresh()
+            elif self.count==2:
+                curses.curs_set(0)
+                self.subwin.move(3*int(self.sub_h/4),int(self.sub_w/5))
+                self.subwin.refresh()
+            elif self.count==3:
+                curses.curs_set(0)
+                self.subwin.move(3*int(self.sub_h/4),3*int(self.sub_w/5))
+                self.subwin.refresh()
+        self.user_text.event(event)
+        self.password_text.event(event)
+        self.register_label.event(event)
+        self.login_label.event(event)
+        if self.user_text.isActive:
+            self.count=0
+        elif self.password_text.isActive:
+            self.count=1
+        elif self.register_label.isActive:
+            self.count=2
+        elif self.login_label.isActive:
+            self.count=3
+

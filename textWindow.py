@@ -18,6 +18,8 @@ class TextWindow:
     def addstr(self,y,x,str):
         self.win.addstr(y,x,str)
         self.cur_x+=1
+    def getText(self):
+        return "".join(self.msg)
     def box(self,w,h):
         self.win.box(w,h)
     def refresh(self):

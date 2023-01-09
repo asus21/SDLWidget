@@ -13,6 +13,7 @@ class EditText:
         self.cur_y=0
         self.cur_x=0
         self.str_x=0
+        self.isActive=False 
     def highlight(self):
         y,x=curses.getsyx()
         curses.init_pair(1,curses.COLOR_RED,0)
@@ -34,6 +35,8 @@ class EditText:
         curses.init_color(curses.COLOR_RED,500,500,500)
         curses.init_pair(1,curses.COLOR_RED,0)
         self.editText.addstr(0,0,hint,curses.color_pair(1))
+    def getText(self):
+        return self.msg
     def onfocus(self):
         y,x=curses.getsyx()
         if x>=self.x and x<=self.x+self.w:
@@ -49,10 +52,10 @@ class EditText:
         self.editText.move(row,col)
         #确定窗口激活
         if self.onfocus():
+            self.isActive=True
             if not self.light:
                 self.highlight()
                 self.light=True
-            self.editText.move(row,col)
             if isinstance(event,int):
                 if event==curses.KEY_LEFT:
                     if col>0 and self.str_x>0:
@@ -62,7 +65,6 @@ class EditText:
                     if col<self.w-3 and self.str_x<len(self.msg):
                         col=col+len(self.msg[self.str_x].encode('gbk'))
                         self.str_x+=1
-#                        self.editText.addstr(0,0,str(col)+" "+str(self.str_x)+" "+str(len(self.msg)))
             else:
                 if event=="\n":
                     pass
@@ -78,7 +80,6 @@ class EditText:
                             col-=2
                         self.msg=self.msg[0:self.str_x]+self.msg[self.str_x+1:]
                 else:
-#                    self.editText.addstr(0,0,str(col)+" "+str(self.str_x)+" "+str(len(self.msg)))
                     if col<self.w-3:
                         if len(self.msg.encode('gbk'))+len(event.encode('gbk'))<self.w-3:
                             if self.str_x<len(self.msg):
@@ -91,12 +92,13 @@ class EditText:
                                 self.editText.addstr(row,col,event)
                                 col+=len(event.encode('gbk'))
                                 self.str_x+=1
-#                            self.editText.addstr(0,0,str(col)+" "+str(self.str_x)+" "+str(len(self.msg)))
+#            self.editText.addstr(0,0,str(col)+" "+str(row))
             self.editText.move(row,col)   
             self.editText.refresh()
             self.cur_y=row
             self.cur_x=col
         else:
+            self.isActive=False
             if self.light:
                 self.unhighlight()
                 self.light=False

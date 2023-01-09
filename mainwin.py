@@ -12,6 +12,7 @@ class MainWindow:
         curses.noecho()
         curses.cbreak()
         curses.start_color()
+        curses.curs_set(0)
         self.h,self.w=self.root.getmaxyx()
         self.login=None
         self.input_window=None
@@ -78,16 +79,16 @@ if __name__=="__main__":
     try:
         isRun=True
         win=MainWindow()
-#        win.create_login()
-#        win.login_refresh()
-        win.creat_head()
-        win.creat_input()
-        win.creat_output()
-        win.create_right()
-        win.head_refresh()
-        win.input_refresh()
-        win.output_refresh()
-        win.right_refresh()
+        win.create_login()
+        win.login_refresh()
+#        win.creat_head()
+#        win.creat_input()
+#        win.creat_output()
+#        win.create_right()
+#        win.head_refresh()
+#        win.input_refresh()
+#        win.output_refresh()
+#        win.right_refresh()
 #        curses.setsyx(0,0)
         win.root_event()
     except Exception as e:
