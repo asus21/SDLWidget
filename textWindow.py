@@ -90,7 +90,7 @@ class TextWindow:
                 elif event==curses.KEY_RIGHT:
                     if col<len(self.msg[row+self.scroll])+1 and col<self.sub_w:
                         col+=1
-                    if col>=len(self.msg[row+self.scroll])+1 and row+self.scroll+1<len(self.msg):
+                    if col>len(self.msg[row+self.scroll])+1 and row+self.scroll+1<len(self.msg):
                         row=row+1
                         if row>=self.sub_h:
                             self.subwin.scroll(1)
@@ -137,8 +137,8 @@ class TextWindow:
                                     self.scroll-=1
                             col=len(self.msg[self.scroll+row])+1
                             tmp=self.scroll+row
-                            if col>=self.sub_w:
-                                col=self.sub_w-1
+                            if len(self.msg[row+self.scroll][:col-1].encode('gbk'))+1>=self.sub_w:
+                                col=len(self.msg[row+self.scroll])
                                 self.subwin.delch(row,len(self.msg[row+self.scroll][:col-1].encode('gbk')))
                                 self.msg[tmp]=self.msg[tmp][0:-1]
                             lens=len(self.msg[tmp])
@@ -168,6 +168,7 @@ class TextWindow:
                             self.msg[self.scroll+row]=tmp[:col-1]+tmp[col:]
                     except:
                         self.win.addstr(0,0,str(col))
+                        self.win.refresh()
                 else:
                     if len(self.msg)<=row+self.scroll:
                         self.msg.append(event) 
@@ -192,8 +193,8 @@ class TextWindow:
                         if len(self.msg)<=row+self.scroll:
                             self.msg.append("")
 #            self.subwin.erase()
-#            self.subwin.addstr(11,0,str(len(self.msg[row+self.scroll])))
-#            self.subwin.addstr(12,0,str(col))
+            self.subwin.addstr(11,0,str(len(self.msg[row+self.scroll])))
+            self.subwin.addstr(12,0,str(col))
 #            self.subwin.addstr(10,0,str(self.sub_w)
 #            self.subwin.addstr(1,0,str(len(self.msg)))
 #            self.subwin.addstr(10,0,str(row))
