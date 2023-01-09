@@ -167,24 +167,22 @@ class TextWindow:
                             tmp=self.msg[self.scroll+row]
                             self.msg[self.scroll+row]=tmp[:col-1]+tmp[col:]
                     except:
-                        self.win.addstr(0,0,str(col))
-                        self.win.refresh()
+                        pass
                 else:
-                    if len(self.msg)<=row+self.scroll:
-                        self.msg.append(event) 
+                    if len(self.msg[row+self.scroll].encode('gbk'))<col:
+                        self.msg[row+self.scroll]+=event
+                        self.subwin.addstr(row,len(self.msg[row+self.scroll][:col-1].encode('gbk'))+1,event)
                     else:
-                        if len(self.msg[row+self.scroll])<col:
-                            self.msg[row+self.scroll]+=event
-                        else:
-                            tmp=self.msg[row+self.scroll]
-                            self.msg[row+self.scroll]=tmp[0:col-1]+event+tmp[col:]
-                    self.subwin.addstr(row,len(self.msg[row+self.scroll][:col-1].encode('gbk'))+1,str(event))
-                    col+=1
+                        tmp=self.msg[row+self.scroll]
+                        self.msg[row+self.scroll]=tmp[0:col-1]+event+tmp[col-1:]
+                        self.subwin.insstr(row,len(self.msg[row+self.scroll][:col-1].encode('gbk'))+1,str(event))
+                    col+=len(event)
                     if len(self.msg[row+self.scroll][:col-1].encode('gbk'))+1>=self.sub_w:
                         col=1
                         row+=1
                         if row>=self.sub_h:
                             self.top.append(self.msg[self.scroll])
+                            if len(self.msg[row+self.scroll-1])<self.sub_w-1:                                    self.subwin.scroll(1)
                             row=self.sub_h-1
                             if self.bottom:
                                 txt=self.bottom.pop()
@@ -193,8 +191,8 @@ class TextWindow:
                         if len(self.msg)<=row+self.scroll:
                             self.msg.append("")
 #            self.subwin.erase()
-            self.subwin.addstr(11,0,str(len(self.msg[row+self.scroll])))
-            self.subwin.addstr(12,0,str(col))
+#            self.subwin.addstr(11,0,str(len(self.msg[row+self.scroll])))
+#            self.subwin.addstr(12,0,str(col))
 #            self.subwin.addstr(10,0,str(self.sub_w)
 #            self.subwin.addstr(1,0,str(len(self.msg)))
 #            self.subwin.addstr(10,0,str(row))
