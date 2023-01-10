@@ -49,6 +49,9 @@ class Label:
             if event==curses.KEY_MOUSE:
                 if self.func:
                     self.func()
+            elif event=='\n':
+                if self.func:
+                    self.func()
         else:
             self.isActive=False
             if self.light:
