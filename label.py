@@ -46,8 +46,9 @@ class Label:
             if not self.light:
                 self.highlight()
                 self.light=True
-            if self.func:
-                self.func()
+            if event==curses.KEY_MOUSE:
+                if self.func:
+                    self.func()
         else:
             self.isActive=False
             if self.light:

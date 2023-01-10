@@ -16,6 +16,7 @@ class LoginWindow():
         self.y=y
         self.x=x
         self.count=0
+        self.enable=True
         self.sub_h=int(h*radio_h)
         self.sub_w=int(w*radio_w)
         self.sub_y=int((1-radio_h)/2*h)
@@ -33,10 +34,18 @@ class LoginWindow():
         self.register_label.setText(login_register)
         self.login_label=Label(self.subwin,3,10,self.sub_y+3*int(self.sub_h/4),self.sub_x+3*int(self.sub_w/5))
         self.login_label.setText(login_text)
+        self.login_label.bind(self.labelFun)
     def refresh(self):  
         self.window.refresh()
         self.subwin.refresh()
-    def event(self,event):
+    def setEnable(self,enable):
+        self.enable=enable
+    def labelFun(self):
+        self.subwin.addstr(0,0,"ok")
+        self.subwin.erase()
+        self.setEnable(False)
+        self.refresh()
+    def __event(self,event):
         if event!=curses.KEY_MOUSE:
             if event==curses.KEY_UP:
                 self.count-=1
@@ -74,4 +83,6 @@ class LoginWindow():
             self.count=2
         elif self.login_label.isActive:
             self.count=3
-
+    def event(self,event):
+        if self.enable:
+            self.__event(event)
