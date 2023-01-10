@@ -15,6 +15,7 @@ class TextWindow:
         self.msg=[""]
         self.top=[]
         self.bottom=[]
+        self.editable=True
     def addstr(self,y,x,str):
         self.win.addstr(y,x,str)
         self.cur_x+=1
@@ -24,6 +25,8 @@ class TextWindow:
         self.win.box(w,h)
     def refresh(self):
         self.win.refresh()
+    def setEditable(self,editable):
+        self.editable=editable
     def onfocus(self):
         y,x=curses.getsyx()
         if x>self.x and x<self.x+self.w:
@@ -34,6 +37,7 @@ class TextWindow:
         else:
             return False
     def event(self,event):
+        curses.curs_set(1)
         row=self.cur_y
         col=self.cur_x
         self.subwin.scrollok(True)
@@ -170,7 +174,7 @@ class TextWindow:
                             self.msg[self.scroll+row]=tmp[:col-1]+tmp[col:]
                     except:
                         pass
-                else:
+                elif self.editable:
                     if len(self.msg[row+self.scroll].encode('gbk'))<col:
                         self.msg[row+self.scroll]+=event
                         self.subwin.addstr(row,len(self.msg[row+self.scroll][:col-1].encode('gbk'))+1,event)

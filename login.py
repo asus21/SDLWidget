@@ -1,6 +1,7 @@
 import curses
 from editText import EditText
 from label import Label
+import json
 radio_h=0.6
 radio_w=0.8
 login_text="logining"
@@ -17,12 +18,12 @@ class LoginWindow():
         self.x=x
         self.count=0
         self.enable=True
+        self.func=None
         self.sub_h=int(h*radio_h)
         self.sub_w=int(w*radio_w)
         self.sub_y=int((1-radio_h)/2*h)
         self.sub_x=int((1-radio_w)/2*w)
         self.window=curses.newwin(h,w,x,y)
-#        self.window.box(".",".")
         self.subwin=self.window.subwin(self.sub_h,self.sub_w,self.sub_y,self.sub_x)
         self.subwin.box(".",".")
         self.subwin.addstr(0,int((self.sub_w-len(login_text))/2),login_text)
@@ -34,17 +35,16 @@ class LoginWindow():
         self.register_label.setText(login_register)
         self.login_label=Label(self.subwin,3,10,self.sub_y+3*int(self.sub_h/4),self.sub_x+3*int(self.sub_w/5))
         self.login_label.setText(login_text)
-        self.login_label.bind(self.labelFun)
     def refresh(self):  
         self.window.refresh()
         self.subwin.refresh()
     def setEnable(self,enable):
         self.enable=enable
-    def labelFun(self):
-        self.subwin.addstr(0,0,"ok")
-        self.subwin.erase()
-        self.setEnable(False)
-        self.refresh()
+    def bind(self,func=None):
+        self.login_label.bind(func)
+    def getText(self):
+        data={"user":self.user_text.getText(),"password":self.password_text.getText()} 
+        return json.dumps(data)
     def __event(self,event):
         if event!=curses.KEY_MOUSE:
             if event==curses.KEY_UP:

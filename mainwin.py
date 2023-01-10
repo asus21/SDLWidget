@@ -18,15 +18,16 @@ class MainWindow:
         self.input_window=None
     def create_login(self):
         self.login=LoginWindow(self.h,self.w,0,0)
-    def creat_head(self):
+        self.login.bind(self.loginFun)
+    def create_head(self):
         self.head_window=TextWindow(4,self.w,0,0)
         self.head_window.box(".",".")
         self.head_window.addstr(int(4/2),int(self.w/3),"|Welecome to here|")
-    def creat_output(self):
+    def create_output(self):
         self.output_window=TextWindow(int(self.h-5),int(self.w/2),5,0)
         self.output_window.box(".",".")
         self.output_window.addstr(1,0,"output:")
-    def creat_input(self):
+    def create_input(self):
         self.input_window=TextWindow(int((self.h-5)/2),int(self.w/2),5+int((self.h-5)/2),int(self.w/2))
         self.input_window.box(".",".")
         self.input_window.addstr(1,0,"intput:")
@@ -46,6 +47,11 @@ class MainWindow:
         self.right_window.refresh()
     def close(self):
         curses.endwin()
+    def loginFun(self):
+        self.root.erase()
+        self.login.setEnable(False)
+        self.root.refresh()
+        self.chat_win()
     def root_event(self):
         self.root.nodelay(0)
         self.root.keypad(True)
@@ -74,13 +80,24 @@ class MainWindow:
                 if self.input_window:   
                     self.input_window.event(ch)
                     self.output_window.event(ch)
-
+    def login_win(self):
+        self.create_login()
+        self.login_refresh()
+    def chat_win(self):
+        self.create_head()
+        self.create_input()
+        self.create_output()
+        self.create_right()
+        self.head_refresh()
+        self.input_refresh()
+        self.output_refresh()
+        self.right_refresh()
 if __name__=="__main__":
     try:
-        isRun=True
         win=MainWindow()
-        win.create_login()
-        win.login_refresh()
+        win.login_win()
+#        win.create_login()
+#        win.login_refresh()
 #        win.creat_head()
 #        win.creat_input()
 #        win.creat_output()
