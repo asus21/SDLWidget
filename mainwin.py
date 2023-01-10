@@ -2,7 +2,7 @@
 import curses
 from threading import Thread
 import time
-from textWindow import TextWindow
+from widget.textWindow import TextWindow
 from login import LoginWindow
 import locale
 locale.setlocale(locale.LC_ALL, '')
@@ -16,6 +16,8 @@ class MainWindow:
         self.h,self.w=self.root.getmaxyx()
         self.login=None
         self.input_window=None
+        self.root.nodelay(0)
+        self.root.keypad(True)
     def create_login(self):
         self.login=LoginWindow(self.h,self.w,0,0)
         self.login.bind(self.loginFun)
@@ -27,6 +29,7 @@ class MainWindow:
         self.output_window=TextWindow(int(self.h-5),int(self.w/2),5,0)
         self.output_window.box(".",".")
         self.output_window.addstr(1,0,"output:")
+        self.output_window.setEditable(False)
     def create_input(self):
         self.input_window=TextWindow(int((self.h-5)/2),int(self.w/2),5+int((self.h-5)/2),int(self.w/2))
         self.input_window.box(".",".")
@@ -35,6 +38,7 @@ class MainWindow:
         self.right_window=TextWindow(int((self.h-5)/2),int(self.w/2),5,int(self.w/2))
         self.right_window.box(".",".")
         self.right_window.addstr(1,0,"friend:")
+        self.right_window.setEditable(False)
     def login_refresh(self):
         self.login.refresh()
     def head_refresh(self):
@@ -53,9 +57,6 @@ class MainWindow:
         self.root.refresh()
         self.chat_win()
     def root_event(self):
-        self.root.nodelay(0)
-        self.root.keypad(True)
-        x=y=0
         self.root.untouchwin()
         curses.mousemask(curses.ALL_MOUSE_EVENTS)
         win=None
@@ -74,12 +75,14 @@ class MainWindow:
                 if self.input_window:
                     self.input_window.event(ch)
                     self.output_window.event(ch)
+                    self.right_window.event(ch)
             else:
                 if self.login:
                     self.login.event(ch)
                 if self.input_window:   
                     self.input_window.event(ch)
                     self.output_window.event(ch)
+                    self.right_window.event(ch)
     def login_win(self):
         self.create_login()
         self.login_refresh()

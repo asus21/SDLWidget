@@ -1,6 +1,6 @@
 import curses
-from editText import EditText
-from label import Label
+from widget.editText import EditText
+from widget.label import Label
 import json
 radio_h=0.6
 radio_w=0.8
