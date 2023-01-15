@@ -44,7 +44,7 @@ class Database:
         self.curs.execute("select * from friendsData where friend=?",(friend,))
         return True if self.curs.fetchone() else False
     def drop_table(self,table):
-        self.curs.execute("drop table ?",(table))
+        self.curs.execute("drop table %s"%(table))
     def close(self):
         self.curs.close()
         self.db.commit()
@@ -61,4 +61,6 @@ if __name__=="__main__":
     db.update_userPassword("ts","110")
     print(db.query_userPassword("ba"))
     print(db.show_tableinfo("usersData"))
+    db.drop_table("usersData")
+    db.drop_table("friendsData")
     db.close()
