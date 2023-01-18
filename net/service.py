@@ -2,7 +2,9 @@ import socket
 from database import Database
 import json
 import re
-from threading import Thread
+import time
+from threading import Thread,Lock
+from queue import Queue
 class Service:
     def __init__(self,addr,port):
         self.addr=addr
@@ -27,58 +29,52 @@ class TCPService:
         self.tcp=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.tcp.bind((addr,port))
         self.tcp.listen(5)
-        self.client=[]
-        self.address=[]
         self.isRun=True
         self.db=Database("dbChat.db")
+        self.db.create_usersTable()
+        self.queue=Queue()
 
     def main(self):
-        Thread(target=self.connect,daemon=True).start()
+        Thread(target=self.connect).start()
+        while self.isRun:
+            msg={"item":None,'result':None}
+            if not self.queue.empty():
+                data=self.queue.get()
+                if data['item']=='register':
+                    msg["item"]='register'
+                    msg["result"]=True
+                    self.db.add_userData([data["user"],data['password']])
+                elif data['item']=='verify':
+                    msg["item"]='verify'
+                    msg["result"]=True
+                    if not self.db.is_existsUser(data['user']):
+                        msg['result']=False
+                elif data['item']=='modify':
+                    msg["item"]='modify'
+                    msg["result"]=True
+                    self.db.update_userPassword(data['user'],data['password'])
+                self.sendMsg(data['connect'],json.dumps(msg).encode())
 
     def connect(self):
         while self.isRun:           
             conn,addr=self.tcp.accept()          
-#            self.client.append(conn)
-#            self.address.append(addr)
             print("\r>> link to address:",addr,end="\n>> ")
-            td=Thread(target=self.recvMsg,args=(conn,addr))
+            td=Thread(target=self.recvMsg,args=(conn,))
             td.start()
 
     def sendMsg(self,conn,msg):                     
         conn.send(msg)
         conn.close()
         
-    def recvMsg(self,conn,addr):  
+    def recvMsg(self,conn):  
         recv=conn.recv(1024)
         if(recv):
-            msg={"type":None,'result':None}
             data=json.loads(recv)
-            if data['type']=='register':
-                 msg["type"]='register'
-                    msg["result"]=True
-
-                    self.db.add_userData([data["user"],data['password']])
-                    self.sendMsg(conn,json.dumps(msg).encode())
-                    break
-                elif data['type']=='verify':
-                    msg["type"]='verify'
-                    msg["result"]=True
-                    if not self.db.is_existsUser(data['user']):
-                        msg['result']=False
-                    self.sendMsg(conn,json.dumps(msg).encode())
-                    break
-                elif data['type']=='modify':
-                    msg["type"]='modify'
-                    msg["result"]=True
-                    self.db.update_userPassword(data['user'],data['password'])
-                    self.sendMsg(conn,json.dumps(msg).encode())
-                    break
-            else:
-                conn.close()
-                print(self.address[index][0],":",self.address[index][1],"exits",end="\n>> ")
-                self.address.pop(index)
-                self.client.pop(index)
-                break
+            data["connect"]=conn 
+            self.queue.put(data)
+        else:
+            conn.close()
+            print("exits",end="\n>> ")
 
 
 class UDPService:
@@ -86,6 +82,11 @@ class UDPService:
         self.addr=addr
         self.port=port
         self.udp=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        self.udp.bind((addr,portp))
+        self.isRun=True
+
+    def connect(self):
+        
 if __name__=="__main__":
-    temp=TCPService("127.0.0.1",8081)
+    temp=TCPService("127.0.0.1",8080)
     temp.main()

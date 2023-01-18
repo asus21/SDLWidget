@@ -8,7 +8,7 @@ class Client:
         self.port=port
         self.client=socket.socket()
 
-    def connect(self);
+    def connect(self):
         try:
             self.client.connect((self.host,self.port))
             return 1
@@ -34,7 +34,7 @@ class TCPClient:
         self.port=port
         self.tcp=socket.socket()
         self.user=User()
-        self.msg={"item":None,"user":None,"passord":None,"friend":None} 
+        self.msg={"item":None,"user":None,"password":None,"friend":None} 
     def setUser(self,name,password):
         self.user.setName(name)
         self.user.setPassword(password) 
@@ -46,23 +46,23 @@ class TCPClient:
         self.msg['item']=item
         self.msg['user']=self.user.getName()
         self.msg['password']=self.user.getPassword()
-        self.msg['friend']=self.user.friend()
+        self.msg['friend']=self.user.getFriends()
 
     def connect(self):
         self.tcp.connect((self.host,self.port))
 
-    def recvMsg(conn):                     
-        recv=conn.recv(1024)
+    def recvMsg(self):                     
+        recv=self.tcp.recv(1024)
         if recv:
             data=json.loads(recv)
             return data['result']
         else:
-            conn.close()
+            self.close()
             print("close")
 
-    def sendMsg(conn):
+    def sendMsg(self):
         data=json.dumps(self.msg)
-        conn.send(data.encode())
+        self.tcp.send(data.encode())
 
     def close(self):
         self.tcp.close()
@@ -73,4 +73,5 @@ if __name__=="__main__":
     temp.setUser("ts","18772463791")
     temp.setMsg("register")
     temp.sendMsg()
-    print(emp.recvMsg())
+    print(temp.recvMsg())
+    temp.close()

@@ -5,7 +5,7 @@ class User:
         self.friends=[]
 
     def getName(self):
-        return name
+        return self.name
 
     def setName(self,name):
         self.name=name
@@ -13,8 +13,8 @@ class User:
     def getPassword(self):
         return self.password
 
-    def setPassword(self,address):
-        self.address=address
+    def setPassword(self,password):
+        self.password=password
 
     def getFriends(self):
         return self.friends
