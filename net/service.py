@@ -46,9 +46,12 @@ class TCPService:
                     self.db.add_userData([data["user"],data['password']])
                 elif data['item']=='verify':
                     msg["item"]='verify'
-                    msg["result"]=True
                     if not self.db.is_existsUser(data['user']):
                         msg['result']=False
+                    else:
+                        msg["result"]=True
+                        msg["friends"]=self.db.query_userFriends(data["user"])
+
                 elif data['item']=='modify':
                     msg["item"]='modify'
                     msg["result"]=True
@@ -82,11 +85,20 @@ class UDPService:
         self.addr=addr
         self.port=port
         self.udp=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-        self.udp.bind((addr,portp))
+        self.udp.bind((addr,port))
         self.isRun=True
+        self.onLine=[] 
 
-    def connect(self):
+    def main(self):
+        data,addr=self.udp.recvfrom(1024)
+        Thread(target=self.recvMsg).start()
+
+    def recvMsg(self):
+        self.onLine.append(addr)
         
+    def sendMsg(self,msg,addr):
+        self.tcp.sendTo(msg,addr)
+
 if __name__=="__main__":
     temp=TCPService("127.0.0.1",8080)
     temp.main()

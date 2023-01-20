@@ -67,6 +67,19 @@ class TCPClient:
     def close(self):
         self.tcp.close()
 
+class UPDClient:
+    def __init__(self,host,port):
+        self.host=host
+        self.port=port
+        self.udp=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+
+    def recvMsg(self):
+        return self.udp.recv(1024)
+
+    def sendMsg(self,msg):
+        self.udp.sendTo(msg,(self.host,self.port))
+
+
 if __name__=="__main__":
     temp=TCPClient("127.0.0.1",8080)
     temp.connect()
