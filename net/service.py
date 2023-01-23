@@ -32,36 +32,44 @@ class TCPService:
         self.isRun=True
         self.db=Database("dbChat.db")
         self.db.create_usersTable()
+        self.db.create_usersLogTable()
+        self.db.create_friendsTable()
         self.queue=Queue()
 
     def main(self):
         Thread(target=self.connect).start()
         while self.isRun:
-            msg={"item":None,'result':None}
             if not self.queue.empty():
+                msg={"item":None,'result':None}
                 data=self.queue.get()
-                if data['item']=='register':
-                    msg["item"]='register'
+                if data['item']=="exit":
+                    msg["item"]="exit"
                     msg["result"]=True
-                    self.db.add_userData([data["user"],data['password']])
-                elif data['item']=='verify':
-                    msg["item"]='verify'
-                    if not self.db.is_existsUser(data['user']):
-                        msg['result']=False
-                    else:
+                    self.sendMsg(data['connect'],json.dumps(msg).encode())
+                    self.db.delete_userLogData(data["user"])
+                else:
+                    if data['item']=='register':
+                        msg["item"]='register'
                         msg["result"]=True
-                        msg["friends"]=self.db.query_userFriends(data["user"])
-
-                elif data['item']=='modify':
-                    msg["item"]='modify'
-                    msg["result"]=True
-                    self.db.update_userPassword(data['user'],data['password'])
-                self.sendMsg(data['connect'],json.dumps(msg).encode())
+                        self.db.add_userData([data["user"],data['password']])
+                    elif data['item']=='verify':
+                        msg["item"]='verify'
+                        if not self.db.is_existsUser(data['user']):
+                            msg['result']=False
+                        else:
+                            msg["result"]=True
+                            msg["friends"]=self.db.query_userFriends(data["user"])
+                            self.db.add_userLog([data["user"],data["connect"].getsockname()[0],None])
+                    elif data['item']=='modify':
+                        msg["item"]='modify'
+                        msg["result"]=True
+                        self.db.update_userPassword(data['user'],data['password'])
+                    self.sendMsg(data['connect'],json.dumps(msg).encode())
 
     def connect(self):
         while self.isRun:           
-            conn,addr=self.tcp.accept()          
-            print("\r>> link to address:",addr,end="\n>> ")
+            conn,addr=self.tcp.accept()         
+            print("\r>> (tcp)link to address:",addr,end="\n>> ")
             td=Thread(target=self.recvMsg,args=(conn,))
             td.start()
 
@@ -79,26 +87,59 @@ class TCPService:
             conn.close()
             print("exits",end="\n>> ")
 
+    def close(self):
+        self.tcp.close()
+        self.db.close()
 
 class UDPService:
-    def __init(self,addr,port): 
+    def __init__(self,addr,port): 
         self.addr=addr
         self.port=port
         self.udp=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.udp.bind((addr,port))
         self.isRun=True
-        self.onLine=[] 
+        self.queue=Queue()
+        self.db=Database("dbChat.db")
+        self.db.create_usersTable()
+        self.db.create_usersLogTable()
+        self.db.create_friendsTable()
 
     def main(self):
-        data,addr=self.udp.recvfrom(1024)
         Thread(target=self.recvMsg).start()
+        while self.isRun:
+            if not self.queue.empty():
+                msg={"sendUser":None,'msg':None}
+                data=self.queue.get()
+                if data["msg"]:
+                    msg["sendUser"]=data["user"]
+                    msg["msg"]=data["msg"]
+                    if self.db.is_existsUserLog(data["friend"]):
+                        _,ip,port=self.db.query_usersLog(data["friend"])
+                        print("sendto:",(ip,port))
+                        self.sendMsg(msg,(ip,port))
+                    else:
+#                        print("the user you want to send msg isn't online")
+                        self.queue.put(data)
+                else:
+                    print("update",data["address"])
+                    self.db.update_usersPort(data["user"],data["address"][1])
 
     def recvMsg(self):
-        self.onLine.append(addr)
-        
+        while self.isRun:
+            recv,addr=self.udp.recvfrom(1024)
+            print("\r>> (udp)link to address:",addr,end="\n>> ")
+            if recv:
+                data=json.loads(recv)
+                data["address"]=addr 
+                self.queue.put(data)
+            
     def sendMsg(self,msg,addr):
-        self.tcp.sendTo(msg,addr)
+        self.udp.sendto(json.dumps(msg).encode(),addr)
+
+    def close(self):
+        self.udp.close()
+        self.db.close()
 
 if __name__=="__main__":
-    temp=TCPService("127.0.0.1",8080)
+    temp=TCPService("127.0.0.1",8081)
     temp.main()

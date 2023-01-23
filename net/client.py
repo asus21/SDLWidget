@@ -35,8 +35,11 @@ class TCPClient:
         self.tcp=socket.socket()
         self.user=User()
         self.msg={"item":None,"user":None,"password":None,"friend":None} 
-    def setUser(self,name,password):
+        self.connect()
+    def setUser(self,name):
         self.user.setName(name)
+
+    def setPassword(self,password):
         self.user.setPassword(password) 
 
     def addFriend(self,friendName):
@@ -54,8 +57,7 @@ class TCPClient:
     def recvMsg(self):                     
         recv=self.tcp.recv(1024)
         if recv:
-            data=json.loads(recv)
-            return data['result']
+            return json.loads(recv)
         else:
             self.close()
             print("close")
@@ -67,23 +69,35 @@ class TCPClient:
     def close(self):
         self.tcp.close()
 
-class UPDClient:
+class UDPClient:
     def __init__(self,host,port):
         self.host=host
         self.port=port
         self.udp=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        self.msg={"user":None,"friend":None,"msg":None}
 
     def recvMsg(self):
-        return self.udp.recv(1024)
+        recv=self.udp.recv(1024)
+        if recv:
+            data=json.loads(recv)
+            return data['msg']
+    
+    def setUser(self,name):
+        self.msg["user"]=name
+        self.sendMsg()
 
-    def sendMsg(self,msg):
-        self.udp.sendTo(msg,(self.host,self.port))
+    def setFriend(self,friend):
+        self.msg["friend"]=friend
 
+    def setMsg(self,msg):
+        self.msg["msg"]=msg
+
+    def sendMsg(self):
+        self.udp.sendto(json.dumps(self.msg).encode(),(self.host,self.port))
 
 if __name__=="__main__":
-    temp=TCPClient("127.0.0.1",8080)
-    temp.connect()
-    temp.setUser("ts","18772463791")
+    temp=TCPClient("127.0.0.1",8081)
+    temp.setUser("ts")
     temp.setMsg("register")
     temp.sendMsg()
     print(temp.recvMsg())
