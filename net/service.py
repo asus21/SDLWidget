@@ -59,7 +59,6 @@ class TCPService:
                         else:
                             msg["result"]=True
                             msg["friends"]=self.db.query_userFriends(data["user"])
-                            self.db.add_userLog([data["user"],data["connect"].getsockname()[0],None])
                     elif data['item']=='modify':
                         msg["item"]='modify'
                         msg["result"]=True
@@ -121,8 +120,9 @@ class UDPService:
 #                        print("the user you want to send msg isn't online")
                         self.queue.put(data)
                 else:
-                    print("update",data["address"])
-                    self.db.update_usersPort(data["user"],data["address"][1])
+                    print("add",data["address"])
+                    self.db.add_userLog([data["user"],data["address"][0],data["address"][1]])
+#                    self.db.update_usersPort(data["user"],data["address"][1])
 
     def recvMsg(self):
         while self.isRun:
