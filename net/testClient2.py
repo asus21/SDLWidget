@@ -7,16 +7,17 @@ tcp.setPassword("18772463791")
 tcp.setMsg("verify")
 tcp.sendMsg()
 msg=tcp.recvMsg()
+udp=UDPClient("127.0.0.1",8081)
 print(msg)
+tcp.close()
 if msg["result"]:
-    udp=UDPClient("127.0.0.1",8081)
-    while True:
-        udp.setUser("admin")
-        data=udp.recvMsg()
-        print(data)
-        udp.setMsg("Thanks for your feedback")
-        udp.sendMsg()
+    udp.setUser("admin")
+    data=udp.recvMsg()
+    print(data)
+    udp.setMsg("Thanks for your feedback")
+    udp.sendMsg()
 else:
+    udp.close()
     print("not register")
     
 

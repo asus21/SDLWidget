@@ -4,6 +4,8 @@ from threading import Thread
 import time
 from widget.textWindow import TextWindow
 from login import LoginWindow
+from net.client import TCPClient
+from net.client import UDPClient
 import locale
 locale.setlocale(locale.LC_ALL, '')
 class MainWindow:
@@ -18,9 +20,11 @@ class MainWindow:
         self.input_window=None
         self.root.nodelay(0)
         self.root.keypad(True)
+        self.tcp=TCPClient("127.0.0.1",8080)
+        self.udp=UDPClient("127.0.0.1",8081)
     def create_login(self):
         self.login=LoginWindow(self.h,self.w,0,0)
-        self.login.bind(self.loginFun)
+        self.login.login_bind(self.loginFun)
     def create_head(self):
         self.head_window=TextWindow(4,self.w,0,0)
         self.head_window.box(".",".")
@@ -52,10 +56,22 @@ class MainWindow:
     def close(self):
         curses.endwin()
     def loginFun(self):
-        self.root.erase()
-        self.login.setEnable(False)
-        self.root.refresh()
-        self.chat_win()
+        data=self.login.getText()
+        self.tcp.setUser(data["user"])
+        self.tcp.setPassword(data["password"])
+        self.tcp.setMsg("verify")
+        self.tcp.sendMsg()
+        msg=self.tcp.recvMsg()
+        if msg["result"]:
+            self.root.erase()
+            self.root.refresh()
+            self.login.setEnable(False)
+            self.chat_win()
+        else:
+            pass
+
+    def registerFun(self):
+        pass
     def root_event(self):
         self.root.untouchwin()
         curses.mousemask(curses.ALL_MOUSE_EVENTS)
@@ -95,6 +111,8 @@ class MainWindow:
         self.input_refresh()
         self.output_refresh()
         self.right_refresh()
+    def register_win(self):
+        pass
 if __name__=="__main__":
     try:
         win=MainWindow()

@@ -40,11 +40,13 @@ class LoginWindow():
         self.subwin.refresh()
     def setEnable(self,enable):
         self.enable=enable
-    def bind(self,func=None):
+    def login_bind(self,func=None):
         self.login_label.bind(func)
+    def register_bind(self,func=None):
+        self.register_label.bind(func)
     def getText(self):
         data={"user":self.user_text.getText(),"password":self.password_text.getText()} 
-        return json.dumps(data)
+        return data
     def __event(self,event):
         if event!=curses.KEY_MOUSE:
             if event==curses.KEY_UP:
