@@ -17,10 +17,10 @@ class EditText:
         self.isClear=False
     def highlight(self):
         y,x=curses.getsyx()
-        curses.init_pair(1,curses.COLOR_RED,0)
-        self.boxText.attron(curses.A_BOLD|curses.color_pair(1))
+        curses.init_pair(2,curses.COLOR_RED,0)
+        self.boxText.attron(curses.A_BOLD|curses.color_pair(2))
         self.boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.boxText.attroff(curses.A_BOLD|curses.color_pair(1))
+        self.boxText.attroff(curses.A_BOLD|curses.color_pair(2))
         self.boxText.refresh()
         curses.setsyx(y,x)
         curses.doupdate()
@@ -28,7 +28,6 @@ class EditText:
         y,x=curses.getsyx()
         self.boxText.standend()
         self.boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)
-#        self.boxText.addstr(0,0,str(y)+" "+str(x))
         self.boxText.refresh()
         curses.setsyx(y,x)
         curses.doupdate()

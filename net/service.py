@@ -5,6 +5,10 @@ import re
 import time
 from threading import Thread,Lock
 from queue import Queue
+import sys
+sys.path.append('.')
+sys.path.append("..")
+from utils.alert import alert
 class TCPService:
     '''tcp服务器主要用于信息验证'''
     def __init__(self,addr,port):
@@ -71,22 +75,26 @@ class TCPService:
         
     def recvMsg(self,conn):  
         '''接受消息'''
-        recv=conn.recv(1024)
-        if(recv):
-            data=json.loads(recv)
-            data["connect"]=conn 
-            self.queue.put(data)
-        else:
-            conn.close()
-            try:
-                assert False,print("exits",end="\n>> ")
-            except:
-                pass
+        while self.isRun:
+            recv=conn.recv(1024)
+            if(recv):
+                data=json.loads(recv)
+                data["connect"]=conn 
+                self.queue.put(data)
+                alert(data)
+            else:
+                conn.close()
+                try:
+                    assert False,print("exits",end="\n>> ")
+                except:
+                    pass
+                break
 
     def close(self):
         '''关闭服务端'''
         self.tcp.close()
         self.db.close()
+        self.isRun=False
 
 class UDPService:
     '''udp服务器主要用于信息发送'''

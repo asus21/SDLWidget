@@ -2,6 +2,7 @@ import curses
 from widget.editText import EditText
 from widget.label import Label
 import json
+import time
 radio_h=0.6
 radio_w=0.8
 login_text="logining"
@@ -10,6 +11,7 @@ login_password="password:"
 login_register="register"
 login_userEdit_hint="please input your account"
 login_registerEdit_hint="please input your password"
+login_alert="doesn't exists the user"
 class LoginWindow():
     def __init__(self,h,w,y,x):
         self.h=h
@@ -37,10 +39,18 @@ class LoginWindow():
         self.register_label.setText(login_register)
         self.login_label=Label(self.subwin,3,10,self.sub_y+3*int(self.sub_h/4),self.sub_x+3*int(self.sub_w/5))
         self.login_label.setText(login_text)
-        
     def refresh(self):  
 #        self.__swift()
         self.window.refresh()
+        self.subwin.refresh()
+    def alert(self,alert):
+        curses.init_pair(3,curses.COLOR_RED,0)
+        self.subwin.addstr(1,(self.sub_w-len(alert))//2,alert,curses.color_pair(3))
+        self.subwin.refresh()
+        y,x=curses.getsyx()
+        time.sleep(2)
+        curses.setsyx(y,x)
+        self.subwin.addstr(1,1," "*(self.sub_w-2))
         self.subwin.refresh()
     def setEnable(self,enable):
         self.enable=enable

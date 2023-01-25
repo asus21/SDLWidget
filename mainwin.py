@@ -20,8 +20,9 @@ class MainWindow:
         self.input_window=None
         self.root.nodelay(0)
         self.root.keypad(True)
-#        self.tcp=TCPClient("127.0.0.1",8080)
-#        self.udp=UDPClient("127.0.0.1",8081)
+        self.count=1
+        self.tcp=TCPClient("127.0.0.1",8080)
+        self.udp=UDPClient("127.0.0.1",8081)
     def create_login(self):
         self.login=LoginWindow(self.h,self.w,0,0)
         self.login.login_bind(self.loginFun)
@@ -60,21 +61,22 @@ class MainWindow:
         data=self.login.getText()
         msg={'result':True}
         if data["user"] and data["password"]:
-#            self.tcp.setUser(data["user"])
-#            self.tcp.setPassword(data["password"])
-#            self.tcp.setMsg("verify")
-#            self.tcp.sendMsg()
-#            msg=self.tcp.recvMsg()
-#            self.root.addstr(0,0,str(msg))
-#            self.root.refresh()
+            self.tcp.setUser(data["user"])
+            self.tcp.setPassword(data["password"])
+            self.tcp.setMsg("verify")
+            self.tcp.sendMsg()
+            msg=self.tcp.recvMsg()
             if msg["result"]:
+                self.root.addstr(0,0,"successful")
                 self.root.erase()
                 self.login.setEnable(False)       
                 self.root.refresh()
                 self.chat_win()
-#                self.tcp.close()
+                self.tcp.close()
             else:
-                pass
+                Thread(target=self.login.alert,args=("don't exist the user",)).start()
+        else:
+            Thread(target=self.login.alert,args=('the password is null',)).start()
 
     def registerFun(self):
         pass
