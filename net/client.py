@@ -1,6 +1,5 @@
 import socket
 from threading import Thread
-from net.user import User
 import json
 class TCPClient:
     def __init__(self,host,port):

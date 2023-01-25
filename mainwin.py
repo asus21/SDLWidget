@@ -20,11 +20,12 @@ class MainWindow:
         self.input_window=None
         self.root.nodelay(0)
         self.root.keypad(True)
-        self.tcp=TCPClient("127.0.0.1",8080)
-        self.udp=UDPClient("127.0.0.1",8081)
+#        self.tcp=TCPClient("127.0.0.1",8080)
+#        self.udp=UDPClient("127.0.0.1",8081)
     def create_login(self):
         self.login=LoginWindow(self.h,self.w,0,0)
         self.login.login_bind(self.loginFun)
+        self.login.register_bind(self.registerFun)
     def create_head(self):
         self.head_window=TextWindow(4,self.w,0,0)
         self.head_window.box(".",".")
@@ -57,18 +58,23 @@ class MainWindow:
         curses.endwin()
     def loginFun(self):
         data=self.login.getText()
-        self.tcp.setUser(data["user"])
-        self.tcp.setPassword(data["password"])
-        self.tcp.setMsg("verify")
-        self.tcp.sendMsg()
-        msg=self.tcp.recvMsg()
-        if msg["result"]:
-            self.root.erase()
-            self.root.refresh()
-            self.login.setEnable(False)
-            self.chat_win()
-        else:
-            pass
+        msg={'result':True}
+        if data["user"] and data["password"]:
+#            self.tcp.setUser(data["user"])
+#            self.tcp.setPassword(data["password"])
+#            self.tcp.setMsg("verify")
+#            self.tcp.sendMsg()
+#            msg=self.tcp.recvMsg()
+#            self.root.addstr(0,0,str(msg))
+#            self.root.refresh()
+            if msg["result"]:
+                self.root.erase()
+                self.login.setEnable(False)       
+                self.root.refresh()
+                self.chat_win()
+#                self.tcp.close()
+            else:
+                pass
 
     def registerFun(self):
         pass
@@ -114,8 +120,8 @@ class MainWindow:
     def register_win(self):
         pass
 if __name__=="__main__":
+    win=MainWindow()
     try:
-        win=MainWindow()
         win.login_win()
 #        win.create_login()
 #        win.login_refresh()

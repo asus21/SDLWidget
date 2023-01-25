@@ -5,11 +5,11 @@ import json
 radio_h=0.6
 radio_w=0.8
 login_text="logining"
-#        login_text=u"登录"
 login_user="user:"
 login_password="password:"
 login_register="register"
-
+login_userEdit_hint="please input your account"
+login_registerEdit_hint="please input your password"
 class LoginWindow():
     def __init__(self,h,w,y,x):
         self.h=h
@@ -31,11 +31,15 @@ class LoginWindow():
         self.subwin.addstr(2*int(self.sub_h/4),int(self.sub_w/5),login_password)
         self.user_text=EditText(self.subwin,3,30,self.sub_y+int(self.sub_h/4)-1,self.sub_x+int(self.sub_w/5)+len(login_user)+3)
         self.password_text=EditText(self.subwin,3,30,self.sub_y+2*int(self.sub_h/4)-1,self.sub_x+int(self.sub_w/5)+len(login_password)+3)
+        self.user_text.setHint(login_userEdit_hint)
+        self.password_text.setHint(login_registerEdit_hint)
         self.register_label=Label(self.subwin,3,10,self.sub_y+3*int(self.sub_h/4),self.sub_x+int(self.sub_w/5))
         self.register_label.setText(login_register)
         self.login_label=Label(self.subwin,3,10,self.sub_y+3*int(self.sub_h/4),self.sub_x+3*int(self.sub_w/5))
         self.login_label.setText(login_text)
+        
     def refresh(self):  
+#        self.__swift()
         self.window.refresh()
         self.subwin.refresh()
     def setEnable(self,enable):
@@ -47,6 +51,23 @@ class LoginWindow():
     def getText(self):
         data={"user":self.user_text.getText(),"password":self.password_text.getText()} 
         return data
+    def __swift(self):
+        if self.count==0:
+            curses.curs_set(1)
+            self.subwin.move(int(self.sub_h/4)-1,int(self.sub_w/5)+len(login_password)+4)
+            self.subwin.refresh()
+        elif self.count==1:
+            curses.curs_set(1)
+            self.subwin.move(2*int(self.sub_h/4)-1,int(self.sub_w/5)+len(login_password)+3)
+            self.subwin.refresh()
+        elif self.count==2:
+            curses.curs_set(0)
+            self.subwin.move(3*int(self.sub_h/4),int(self.sub_w/5))
+            self.subwin.refresh()
+        elif self.count==3:
+            curses.curs_set(0)
+            self.subwin.move(3*int(self.sub_h/4),3*int(self.sub_w/5))
+            self.subwin.refresh()
     def __event(self,event):
         if event!=curses.KEY_MOUSE:
             if event==curses.KEY_UP:
@@ -57,22 +78,7 @@ class LoginWindow():
                 self.count+=1
                 if self.count>3:
                     self.count=3
-            if self.count==0:
-                curses.curs_set(1)
-                self.subwin.move(int(self.sub_h/4)-1,int(self.sub_w/5)+len(login_password)+4)
-                self.subwin.refresh()
-            elif self.count==1:
-                curses.curs_set(1)
-                self.subwin.move(2*int(self.sub_h/4)-1,int(self.sub_w/5)+len(login_password)+3)
-                self.subwin.refresh()
-            elif self.count==2:
-                curses.curs_set(0)
-                self.subwin.move(3*int(self.sub_h/4),int(self.sub_w/5))
-                self.subwin.refresh()
-            elif self.count==3:
-                curses.curs_set(0)
-                self.subwin.move(3*int(self.sub_h/4),3*int(self.sub_w/5))
-                self.subwin.refresh()
+        self.__swift()
         self.user_text.event(event)
         self.password_text.event(event)
         self.register_label.event(event)

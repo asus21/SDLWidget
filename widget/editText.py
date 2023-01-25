@@ -7,13 +7,14 @@ class EditText:
         self.boxText=top.subwin(h,w,y,x)
         self.editText=top.subwin(h-2,w-2,y+1,x+1)
         self.boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.setHint("ok")
         self.light=False
         self.msg=""
         self.cur_y=0
         self.cur_x=0
         self.str_x=0
         self.isActive=False 
+        self.hint=""
+        self.isClear=False
     def highlight(self):
         y,x=curses.getsyx()
         curses.init_pair(1,curses.COLOR_RED,0)
@@ -32,11 +33,24 @@ class EditText:
         curses.setsyx(y,x)
         curses.doupdate()
     def setHint(self,hint):
+        self.hint=hint
+        self.showHint()
+    def showHint(self):
         curses.init_color(curses.COLOR_RED,500,500,500)
         curses.init_pair(1,curses.COLOR_RED,0)
-        self.editText.addstr(0,0,hint,curses.color_pair(1))
+        self.editText.addstr(0,0,self.hint,curses.color_pair(1))
+        self.editText.move(0,0)
+        self.isClear=True
+    def clearHint(self):
+        if self.isClear:
+            self.editText.clear()
+            self.isClear=False
     def getText(self):
         return self.msg
+    def refresh(self):
+        if len(self.msg)==0:
+            self.showHint()
+        self.editText.refresh()
     def onfocus(self):
         y,x=curses.getsyx()
         if x>=self.x and x<=self.x+self.w:
@@ -80,6 +94,7 @@ class EditText:
                             col-=2
                         self.msg=self.msg[0:self.str_x]+self.msg[self.str_x+1:]
                 else:
+                    self.clearHint()
                     if col<self.w-3:
                         if len(self.msg.encode('gbk'))+len(event.encode('gbk'))<self.w-3:
                             if self.str_x<len(self.msg):
@@ -94,7 +109,7 @@ class EditText:
                                 self.str_x+=1
 #            self.editText.addstr(0,0,str(col)+" "+str(row))
             self.editText.move(row,col)   
-            self.editText.refresh()
+            self.refresh()
             self.cur_y=row
             self.cur_x=col
         else:
