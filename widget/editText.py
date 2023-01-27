@@ -17,6 +17,7 @@ class EditText:
         self.isClear=False
     def highlight(self):
         y,x=curses.getsyx()
+        curses.init_color(curses.COLOR_RED,1000,0,0)
         curses.init_pair(2,curses.COLOR_RED,0)
         self.boxText.attron(curses.A_BOLD|curses.color_pair(2))
         self.boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)

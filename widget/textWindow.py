@@ -1,4 +1,5 @@
 import curses
+from curses import ascii
 class TextWindow:
     def __init__(self,h,w,y,x):
         self.h,self.w=h,w
@@ -11,16 +12,64 @@ class TextWindow:
         self.subwin=self.win.subwin(self.sub_h,self.sub_w,self.sub_y,self.sub_x)
         self.cur_x=0
         self.cur_y=0
+        self.cur_choose=0
         self.scroll=0
         self.msg=[""]
         self.top=[]
         self.bottom=[]
         self.editable=True
+        self.func=None
+        self.subWiget=[]
     def addstr(self,y,x,str):
         self.win.addstr(y,x,str)
         self.cur_x+=1
+    def addWidght(self,widget):
+        self.subWidget.append(widget)
+
+    def highlightLine(self):
+        if self.cur_choose==self.cur_y:
+            y,x=curses.getsyx()
+            curses.init_color(curses.COLOR_RED,1000,0,0)
+            curses.init_pair(4,curses.COLOR_BLACK,curses.COLOR_RED)
+            self.subwin.addstr(self.cur_y,0,self.msg[self.cur_y],curses.color_pair(4))
+            self.subwin.refresh()
+            curses.setsyx(y,x)
+            curses.doupdate()
+        else:
+            self.unhighlightLine()
+            y,x=curses.getsyx()
+            curses.init_color(curses.COLOR_RED,1000,0,0)
+            curses.init_pair(4,curses.COLOR_BLACK,curses.COLOR_RED)
+            self.subwin.addstr(self.cur_y,0,self.msg[self.cur_y],curses.color_pair(4))
+            self.subwin.refresh()
+            curses.setsyx(y,x)
+            curses.doupdate()
+            self.cur_choose=self.cur_y
+            
+
+    def unhighlightLine(self):
+        y,x=curses.getsyx()
+        self.subwin.standend()
+        self.subwin.addstr(self.cur_choose,0,self.msg[self.cur_choose])
+        self.subwin.refresh()
+        curses.setsyx(y,x)
+        curses.doupdate()
+    def bind(self,func=None):
+        self.func=func
     def getText(self):
         return "".join(self.msg)
+    def getLine(self):
+        return self.cur_y
+    def getLineText(self):
+        return self.msg[self.cur_y]
+    def setText(self,text):
+        self.msg=text.split("\n")
+        for i in range(len(self.msg)):
+            if i<self.sub_h:
+                self.subwin.addstr(i,0,self.msg[i])
+            else:
+                self.bottom.append(self.msg[i])
+        self.subwin.refresh()
     def box(self,w,h):
         self.win.box(w,h)
     def refresh(self):
@@ -174,7 +223,7 @@ class TextWindow:
                             self.msg[self.scroll+row]=tmp[:col-1]+tmp[col:]
                     except:
                         pass
-                elif self.editable:
+                elif self.editable and not ascii.isctrl(event):
                     if len(self.msg[row+self.scroll].encode('gbk'))<col:
                         self.msg[row+self.scroll]+=event
                         self.subwin.addstr(row,len(self.msg[row+self.scroll][:col-1].encode('gbk'))+1,event)
@@ -196,6 +245,9 @@ class TextWindow:
                             self.scroll+=1
                         if len(self.msg)<=row+self.scroll:
                             self.msg.append("")
+                else:
+                    if self.func:
+                        self.func(event)
 #            self.subwin.erase()
 #            self.subwin.addstr(11,0,str(len(self.msg[row+self.scroll])))
 #            self.subwin.addstr(12,0,str(col))
