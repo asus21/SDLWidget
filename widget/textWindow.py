@@ -25,13 +25,17 @@ class TextWindow:
         self.cur_x+=1
     def addWidght(self,widget):
         self.subWidget.append(widget)
-
+    def getCursor(self):
+        return (self.y+self.cur_y,self.x+self.cur_x)
+    def setCursor(self,y,x):
+        curses.setsyx(self.y,self.x)
+        curses.doupdate()
     def highlightLine(self):
         if self.cur_choose==self.cur_y:
             y,x=curses.getsyx()
             curses.init_color(curses.COLOR_RED,1000,0,0)
             curses.init_pair(4,curses.COLOR_BLACK,curses.COLOR_RED)
-            self.subwin.addstr(self.cur_y,0,self.msg[self.cur_y],curses.color_pair(4))
+            self.subwin.addstr(self.cur_y,1,self.msg[self.cur_y],curses.color_pair(4))
             self.subwin.refresh()
             curses.setsyx(y,x)
             curses.doupdate()
@@ -40,17 +44,15 @@ class TextWindow:
             y,x=curses.getsyx()
             curses.init_color(curses.COLOR_RED,1000,0,0)
             curses.init_pair(4,curses.COLOR_BLACK,curses.COLOR_RED)
-            self.subwin.addstr(self.cur_y,0,self.msg[self.cur_y],curses.color_pair(4))
+            self.subwin.addstr(self.cur_y,1,self.msg[self.cur_y],curses.color_pair(4))
             self.subwin.refresh()
             curses.setsyx(y,x)
             curses.doupdate()
             self.cur_choose=self.cur_y
-            
-
     def unhighlightLine(self):
         y,x=curses.getsyx()
         self.subwin.standend()
-        self.subwin.addstr(self.cur_choose,0,self.msg[self.cur_choose])
+        self.subwin.addstr(self.cur_choose,1,self.msg[self.cur_choose])
         self.subwin.refresh()
         curses.setsyx(y,x)
         curses.doupdate()
@@ -66,7 +68,7 @@ class TextWindow:
         self.msg=text.split("\n")
         for i in range(len(self.msg)):
             if i<self.sub_h:
-                self.subwin.addstr(i,0,self.msg[i])
+                self.subwin.addstr(i,1,self.msg[i])
             else:
                 self.bottom.append(self.msg[i])
         self.subwin.refresh()
@@ -78,8 +80,8 @@ class TextWindow:
         self.editable=editable
     def onfocus(self):
         y,x=curses.getsyx()
-        if x>self.x and x<self.x+self.w:
-            if y>self.y and y<self.y+self.h:
+        if x>=self.x and x<=self.x+self.w:
+            if y>=self.y and y<=self.y+self.h:
                 return True
             else:
                 return False
@@ -92,10 +94,10 @@ class TextWindow:
         self.subwin.scrollok(True)
         #全屏滑动,滑动宽度为self.sub_h
         self.subwin.setscrreg(0,self.sub_h-1)
-        #首先移动光标到文本位置
-        self.subwin.move(row,col)
         #确定窗口激活
         if self.onfocus():
+            #首先移动光标到文本位置
+            self.subwin.move(row,col)
             if isinstance(event,int):
                 if event==curses.KEY_UP:
                 #如果实际行数大于0行数就减一
