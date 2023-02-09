@@ -25,6 +25,9 @@ class EditText:
         self.__boxText.refresh()
         curses.setsyx(y,x)
         curses.doupdate()
+    @property
+    def isActive(self):
+        return self.__isActive
     def unhighlight(self):
         y,x=curses.getsyx()
         self.__boxText.standend()
@@ -32,7 +35,7 @@ class EditText:
         self.__boxText.refresh()
         curses.setsyx(y,x)
         curses.doupdate()
-    def setHint(self.__hint):
+    def setHint(self,hint):
         self.__hint=hint
         self.showHint()
     def showHint(self):

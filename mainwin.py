@@ -91,7 +91,7 @@ class MainWindow:
         self.udp.close()
         curses.endwin()
     def button_login(self):
-        '''登录函数'''
+        '''登录按钮函数'''
         data=self.win_login.getText()
         if data["user"] and data["password"]:
             self.tcp.setUser(data["user"])
@@ -103,7 +103,7 @@ class MainWindow:
                 self.root.erase()
                 self.win_login=None
                 self.root.refresh()
-                self.chat_win()
+                self.show_win_chat()
                 self.tcp.close()
                 self.udp.setUser(data['user'])
             else:
@@ -111,13 +111,15 @@ class MainWindow:
         else:
             Thread(target=self.win_login.alert,args=('the password is null',)).start()
     def button_register(self):
+        '''注册按钮函数'''
         self.root.erase()
         self.win_login=None
         self.root.refresh()
-        self.win_register_win()
+        self.show_win_register()
     def button_exit(self):
         self.close()
     def button_sure(self):
+        '''确认按钮'''
         data=self.win_register.getData()
         if data["password"]==data["again"]:
             if data["user"] and data["password"]:
@@ -130,7 +132,7 @@ class MainWindow:
                     self.root.erase()
                     self.win_register=None
                     self.root.refresh()
-                    self.win_login_win()
+                    self.show_win_login()
                 else:
                     Thread(target=self.win_register.alert,args=("Fail to register",)).start()
             else:
@@ -138,11 +140,13 @@ class MainWindow:
         else:
             Thread(target=self.win_register.alert,args=('Differ from password and again',)).start()
     def button_reture(self):
+        '''返回按钮'''
         self.root.erase()
         self.win_register=None
         self.root.refresh()
-        self.win_login_win()
+        self.show_win_login()
     def event_win_input(self,ch):
+        '''输入框事件'''
         if ch==ascii.ctrl("s"):
             msg=self.win_input.getText()
             friend=self.win_friend.getLineText()
@@ -157,6 +161,7 @@ class MainWindow:
             self.addFd_win()
 
     def event_win_friend(self,ch):
+        '''朋友列表事件'''
         if ch==ascii.ctrl("a"):
             self.win_friend.highlightLine()
             y,x=self.win_input.getCursor()
@@ -167,7 +172,7 @@ class MainWindow:
         elif ch==ascii.ctrl("d"):
             self.win_friend.unhighlightLine()
     def root_event(self):
-#        self.win_login.ungetmouse()
+        '''根窗口事件'''
         while True:
             ch=self.root.get_wch()
             if ch=="\x1b":
@@ -194,15 +199,15 @@ class MainWindow:
                     self.win_input.event(ch)
                     self.win_output.event(ch)
                     self.win_friend.event(ch)
-    def login_win(self):
+    def show_win_login(self):
         self.create_win_login()
         self.win_login.ungetmouse()
         self.refresh_win_login()
-    def register_win(self):
+    def show_win_register(self):
         self.create_win_register()
         self.win_register.ungetmouse()
         self.refresh_win_register()
-    def chat_win(self):
+    def show_win_chat(self):
         self.create_win_head()
         self.create_win_input()
         self.create_win_output()
@@ -214,7 +219,7 @@ class MainWindow:
 if __name__=="__main__":
     win=MainWindow()
     try:
-        win.login_win()
+        win.show_win_login()
         win.root_event()
     except Exception as e:
         raise e
