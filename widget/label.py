@@ -4,31 +4,30 @@ class Label:
     def __init__(self,top,h,w,y,x):
         self.h,self.w=h,w
         self.y,self.x=y,x
-        self.label=top.subwin(h,w,y,x)
-        self.label.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.func=None
-        self.light=False
-        self.isActive=True
+        self.__label=top.subwin(h,w,y,x)
+        self.__label.box(curses.ACS_VLINE,curses.ACS_HLINE)
+        self.__func=None
+        self.__light=False
+        self.__isActive=True
     def setText(self,text):
-        self.label.addstr(int(self.h/2),int(self.w/2-len(text)/2),text)
-        self.label.refresh()
-    def bind(self,func=None):
-        self.func=func
+        self.__label.addstr(self.h//2,self.w//2-len(text)/2),text)
+        self.__label.refresh()
+    def bind(self.__func=None):
+        self.__func=func
     def refresh(self):
-        self.label.refresh()
+        self.__label.refresh()
     def highlight(self):
         y,x=curses.getsyx()
         curses.init_pair(1,curses.COLOR_RED,0)  
-        self.label.attron(curses.A_BOLD|curses.color_pair(1))
-        self.label.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.label.attroff(curses.A_BOLD|curses.color_pair(1))
-        self.label.refresh()                                                        
+        self.__label.attron(curses.A_BOLD|curses.color_pair(1))
+        self.__label.box(curses.ACS_VLINE,curses.ACS_HLINE)
+        self.__label.attroff(curses.A_BOLD|curses.color_pair(1))
         curses.setsyx(y,x)   
         curses.doupdate()
     def unhighlight(self):
         y,x=curses.getsyx()
-        self.label.box(curses.ACS_VLINE,curses.ACS_HLINE)       
-        self.label.refresh()
+        self.__label.box(curses.ACS_VLINE,curses.ACS_HLINE)       
+        self.__label.refresh()
         curses.setsyx(y,x)
         curses.doupdate()
     def onfocus(self):
@@ -42,19 +41,19 @@ class Label:
             return False
     def event(self,event):
         if self.onfocus():
-            self.isActive=True
-            if not self.light:
+            self.__isActive=True
+            if not self.__light:
                 self.highlight()
-                self.light=True
+                self.__light=True
             if event==curses.KEY_MOUSE:
-                if self.func:
-                    self.func()
+                if self.__func:
+                    self.__func()
             elif event=='\n':
-                if self.func:
-                    self.func()
+                if self.__func:
+                    self.__func()
         else:
-            self.isActive=False
-            if self.light:
+            self.__isActive=False
+            if self.__light:
                 self.unhighlight()
-                self.light=False
+                self.__light=False
         
