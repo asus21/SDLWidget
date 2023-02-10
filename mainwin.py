@@ -43,7 +43,7 @@ class MainWindow:
         self.win_register.button_sure_bind(self.button_sure)
         self.win_register.button_return_bind(self.button_reture)
     def create_win_head(self):
-        '''截面头部'''
+        '''界面头部'''
         self.win_head=TextWindow(4,self.w,0,0)
         self.win_head.box(".",".")
         self.win_head.addstr(4//2,self.w//3,"|Welecome to myChat|")
@@ -138,7 +138,7 @@ class MainWindow:
             else:
                 Thread(target=self.win_register.alert,args=('The password is null',)).start()
         else:
-            Thread(target=self.win_register.alert,args=('Differ from password and again',)).start()
+            Thread(target=self.win_register.alert,args=('Different from twice password input',)).start()
     def button_reture(self):
         '''返回按钮'''
         self.root.erase()

@@ -1,5 +1,5 @@
 import curses
-
+from widget import color
 class Label:
     def __init__(self,top,h,w,y,x):
         self.h,self.w=h,w
@@ -18,10 +18,10 @@ class Label:
         self.__label.refresh()
     def highlight(self):
         y,x=curses.getsyx()
-        curses.init_pair(1,curses.COLOR_RED,0)  
-        self.__label.attron(curses.A_BOLD|curses.color_pair(1))
+#        curses.init_pair(1,color.red,0)  
+        self.__label.attron(curses.A_BOLD|color.red)
         self.__label.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.__label.attroff(curses.A_BOLD|curses.color_pair(1))
+        self.__label.attroff(curses.A_BOLD|color.red)
         self.__label.refresh()
         curses.setsyx(y,x)   
         curses.doupdate()

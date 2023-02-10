@@ -18,12 +18,12 @@ class TextWindow:
         self.__top=[]
         self.__bottom=[]
         self.__func=None
-        self.editable=True
-        self.subWiget=[]
+        self.__editable=True
+        self.__subWiget=[]
     def addstr(self,y,x,str):
         self.__win.addstr(y,x,str)
     def addWidght(self,widget):
-        self.subWidget.append(widget)
+        self.__subWidget.append(widget)
     def getCursor(self):
         return (self.y+self.__cur_y,self.x+self.__cur_x)
     def setCursor(self,y,x):
@@ -61,10 +61,18 @@ class TextWindow:
         self.__func=func
     def getText(self):
         return "".join(self.__msg)
-    def getLine(self):
+    def getLineRow(self):
         return self.__cur_y
-    def getLineText(self):
-        return self.__msg[self.__cur_y]
+    def getLineText(self,line=None):
+        text=None
+        if line:
+            try:
+                text=self.__msg[line]
+            except:
+                text=None
+        else:
+            self.__msg[self.__cur_y]
+        return text
     def setText(self,text):
         self.__msg=text.split("\n")
         for i in range(len(self.__msg)):
@@ -87,9 +95,10 @@ class TextWindow:
         self.__bottom=[]
         self.__subwin.erase()
         self.__subwin.refresh()
+#        self.__subwin.addstr(10,0,"ok")
         self.ungetmouse()
     def setEditable(self,editable):
-        self.editable=editable
+        self.__editable=editable
     def onfocus(self):
         y,x=curses.getsyx()
         if x>=self.x and x<=self.x+self.w:
@@ -237,7 +246,7 @@ class TextWindow:
                             self.__msg[self.__scroll+row]=tmp[:col-1]+tmp[col:]
                     except:
                         pass
-                elif self.editable and not ascii.isctrl(event):
+                elif self.__editable and not ascii.isctrl(event):
                     if len(self.__msg[row+self.__scroll].encode('gbk'))<col:
                         self.__msg[row+self.__scroll]+=event
                         self.__subwin.addstr(row,len(self.__msg[row+self.__scroll][:col-1].encode('gbk'))+1,event)

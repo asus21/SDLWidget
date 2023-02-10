@@ -17,7 +17,6 @@ class EditText:
         self.__isClear=False
     def highlight(self):
         y,x=curses.getsyx()
-        curses.init_color(curses.COLOR_RED,1000,0,0)
         curses.init_pair(2,curses.COLOR_RED,0)
         self.__boxText.attron(curses.A_BOLD|curses.color_pair(2))
         self.__boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)
@@ -39,11 +38,12 @@ class EditText:
         self.__hint=hint
         self.showHint()
     def showHint(self):
-        curses.init_color(curses.COLOR_RED,500,500,500)
-        curses.init_pair(1,curses.COLOR_RED,0)
+        curses.init_color(curses.COLOR_WHITE,500,500,500)
+        curses.init_pair(1,curses.COLOR_WHITE,0)
         self.__editText.addstr(0,0,self.__hint,curses.color_pair(1))
         self.__editText.move(0,0)
         self.__isClear=True
+        curses.init_color(curses.COLOR_WHITE,1000,1000,1000)
     def clearHint(self):
         if self.__isClear:
             self.__editText.clear()
@@ -54,6 +54,9 @@ class EditText:
         if len(self.__msg)==0:
             self.showHint()
         self.__editText.refresh()
+    def setfocus(self):
+        self.__editText.move(self.__cur_y,self.__cur_x)
+        self.refresh()
     def onfocus(self):
         y,x=curses.getsyx()
         if x>=self.x and x<=self.x+self.w:
