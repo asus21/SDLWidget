@@ -38,9 +38,11 @@ class FriendWindow():
         self.friend_label.setText(friend_register)
         self.exit_label=Label(self.subwin,3,10,self.sub_y+3*int(self.sub_h/4),self.sub_x+3*int(self.sub_w/5))
         self.exit_label.setText(friend_exit)
+
     def refresh(self):  
         self.window.refresh()
         self.subwin.refresh()
+
     def alert(self,alert):
         curses.init_pair(3,curses.COLOR_RED,0)
         self.subwin.addstr(1,(self.sub_w-len(alert))//2,alert,curses.color_pair(3))
@@ -50,15 +52,20 @@ class FriendWindow():
         curses.setsyx(y,x)
         self.subwin.addstr(1,1," "*(self.sub_w-2))
         self.subwin.refresh()
+
     def setEnable(self,enable):
         self.enable=enable
+
     def friend_bind(self,func=None):
         self.friend_label.bind(func)
+
     def exit_bind(self,func=None):
         self.exit_label.bind(func)
+
     def getText(self):
         data={"friend":self.user_text.getText()} 
         return data
+
     def __swift(self):
         if self.count==0:
             curses.curs_set(1)
@@ -72,6 +79,7 @@ class FriendWindow():
             curses.curs_set(0)
             self.subwin.move(3*int(self.sub_h/4),3*int(self.sub_w/5))
             self.subwin.refresh()
+
     def __event(self,event):
         if event!=curses.KEY_MOUSE:
             if event==curses.KEY_UP:
