@@ -27,8 +27,6 @@ class MainWindow:
         self.root.nodelay(0)
         self.root.keypad(True)
         self.root.untouchwin()
-        self.tcp=TCPClient(host,TCPport)
-        self.udp=UDPClient(host,UDPport)
         self.win_login=None
         self.win_input=None
         self.win_register=None
@@ -92,24 +90,21 @@ class MainWindow:
         curses.endwin()
     def button_login(self):
         '''登录按钮函数'''
+        tcp=TCPClient(host,TCPport)
         data=self.win_login.getText()
-        if data["user"] and data["password"]:
-            self.tcp.setUser(data["user"])
-            self.tcp.setPassword(data["password"])
-            self.tcp.setMsg("verify")
-            self.tcp.sendMsg()
-            msg=self.tcp.recvMsg()
-            if msg["result"]:
-                self.root.erase()
-                self.win_login=None
-                self.root.refresh()
-                self.show_win_chat()
-                self.tcp.close()
-                self.udp.setUser(data['user'])
-            else:
-                Thread(target=self.win_login.alert,args=("don't exist the user",)).start()
+        tcp.setData(data)
+        tcp.sendMsg()
+        msg=tcp.recvMsg()
+        tcp.close()
+        if msg["result"]:
+            self.root.erase()
+            self.win_login=None
+            self.root.refresh()
+            self.show_win_chat()
+            self.udp=UDPClient(host,UDPport)
+            self.udp.setUser(data['user'])
         else:
-            Thread(target=self.win_login.alert,args=('the password is null',)).start()
+            Thread(target=self.win_login.alert,args=(msg['error'],)).start()
     def button_register(self):
         '''注册按钮函数'''
         self.root.erase()
@@ -121,24 +116,18 @@ class MainWindow:
     def button_sure(self):
         '''确认按钮'''
         data=self.win_register.getData()
-        if data["password"]==data["again"]:
-            if data["user"] and data["password"]:
-                self.tcp.setUser(data["user"])
-                self.tcp.setPassword(data["password"])
-                self.tcp.setMsg("register")
-                self.tcp.sendMsg()
-                msg=self.tcp.recvMsg()
-                if msg["result"]:
-                    self.root.erase()
-                    self.win_register=None
-                    self.root.refresh()
-                    self.show_win_login()
-                else:
-                    Thread(target=self.win_register.alert,args=("Fail to register",)).start()
-            else:
-                Thread(target=self.win_register.alert,args=('The password is null',)).start()
+        tcp=TCPClient(host,TCPport)
+        tcp.setData(data)
+        tcp.sendMsg()
+        msg=tcp.recvMsg()
+        tcp.close()
+        if msg["result"]:
+            self.root.erase()
+            self.win_register=None
+            self.root.refresh()
+            self.show_win_login()
         else:
-            Thread(target=self.win_register.alert,args=('Different from twice password input',)).start()
+            Thread(target=self.win_register.alert,args=(msg['error'],)).start()
     def button_reture(self):
         '''返回按钮'''
         self.root.erase()
@@ -159,7 +148,6 @@ class MainWindow:
             self.win_input=self.win_output=self.win_friend=None
             self.root.refresh()
             self.addFd_win()
-
     def event_win_friend(self,ch):
         '''朋友列表事件'''
         if ch==ascii.ctrl("a"):
@@ -217,12 +205,11 @@ class MainWindow:
         self.refresh_win_output()
         self.refresh_win_right()
 if __name__=="__main__":
-    win=MainWindow()
     try:
+        win=MainWindow()
         win.show_win_login()
         win.root_event()
     except Exception as e:
         raise e
     finally:
-        win.close()
-
+        curses.endwin()

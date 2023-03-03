@@ -18,10 +18,9 @@ class Label:
         self.__label.refresh()
     def highlight(self):
         y,x=curses.getsyx()
-#        curses.init_pair(1,color.red,0)  
-        self.__label.attron(curses.A_BOLD|color.red)
+        self.__label.attron(color.red)
         self.__label.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.__label.attroff(curses.A_BOLD|color.red)
+        self.__label.attroff(color.red)
         self.__label.refresh()
         curses.setsyx(y,x)   
         curses.doupdate()
@@ -34,6 +33,9 @@ class Label:
     @property
     def isActive(self):
         return self.__isActive
+    def setfocus(self):
+        self.__label.move(0,0)
+        self.__label.refresh()
     def onfocus(self):
         y,x=curses.getsyx()
         if x>=self.x and x<=self.x+self.w:

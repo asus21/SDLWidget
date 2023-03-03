@@ -1,6 +1,7 @@
 import curses
 from widget.editText import EditText
 from widget.label import Label
+from widget import color
 import json
 import time
 radio_h=0.8
@@ -54,8 +55,7 @@ class RegisterWindow():
         self.__window.refresh()
         self.__subwin.refresh()
     def alert(self,alert):
-        curses.init_pair(3,curses.COLOR_RED,0)
-        self.__subwin.addstr(1,(self.__sub_w-len(alert))//2,alert,curses.color_pair(3))
+        self.__subwin.addstr(1,(self.__sub_w-len(alert))//2,alert,color.red)
         self.__subwin.refresh()
         y,x=curses.getsyx()
         time.sleep(2)
@@ -71,31 +71,28 @@ class RegisterWindow():
     def ungetmouse(self):
         curses.ungetmouse(1,self.text_user.x,self.text_user.y,0,1)
     def getData(self):
-        data={"user":self.text_user.getText(),\
+        data={"item":"register",\
+              "user":self.text_user.getText(),\
               "password":self.text_password.getText(),\
               "again":self.text_again.getText()} 
         return data
     def __swift(self):
         if self.__count==0:
             curses.curs_set(1)
-            self.__subwin.move(self.text_user.y,self.text_user.x)
-            self.__subwin.refresh()
+            self.text_user.setfocus()
+            
         elif self.__count==1:
             curses.curs_set(1)
-            self.__subwin.move(self.text_password.y,self.text_password.x)
-            self.__subwin.refresh()
+            self.text_password.setfocus()
         elif self.__count==2:
             curses.curs_set(1)
-            self.__subwin.move(self.text_again.y,self.text_again.x)
-            self.__subwin.refresh()
+            self.text_again.setfocus()
         elif self.__count==3:
             curses.curs_set(0)
-            self.__subwin.move(self.button_sure.y,self.button_sure.x)
-            self.__subwin.refresh()
+            self.button_sure.setfocus()
         elif self.__count==4:
             curses.curs_set(0)
-            self.__subwin.move(self.button_return.y,self.button_return.x)
-            self.__subwin.refresh()
+            self.button_return.setfocus()
     def __event(self,event):
         if event!=curses.KEY_MOUSE:
             if event==curses.KEY_UP:

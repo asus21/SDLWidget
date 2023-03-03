@@ -71,37 +71,37 @@ class Database:
         self.curs.execute("update usersLog set port=? where user=?;",(port,user))
         self.commit()
 
-    def query_userPassword(self,user):
+    def query_userPassword(self,user)->str:
         '''获取用户密码'''
         self.curs.execute("select password from usersData where user=?",(user,))
-        return self.curs.fetchone()
+        return self.curs.fetchone()[0]
 
-    def query_userFriends(self,user):
+    def query_userFriends(self,user)->list:
         '''获取用户所有朋友'''
         self.curs.execute("select friend from friendsData where user=?",(user,))
-        return self.curs.fetchall()
+        return [x[0] for x in self.curs.fetchall()]
 
-    def query_usersLog(self,user):
+    def query_usersLog(self,user)->str:
         '''获取用户日志'''
         self.curs.execute("select * from usersLog where user=?",(user,))
-        return self.curs.fetchone()
+        return self.curs.fetchone()[0]
 
-    def show_tableinfo(self,table):
+    def show_tableinfo(self,table)->list:
         '''显示数据表信息'''
         self.curs.execute("PRAGMA table_info(%s)"%(table,))
         return self.curs.fetchall()
 
-    def is_existsUser(self,user):
+    def is_existsUser(self,user)->bool:
         '''检查是否存在用户'''
         self.curs.execute("select * from usersData where user=?",(user,))
         return True if self.curs.fetchone() else False
 
-    def is_existsFriend(self,friend):
+    def is_existsFriend(self,friend)->bool:
         '''检查是否存在朋友'''
         self.curs.execute("select * from friendsData where friend=?",(friend,))
         return True if self.curs.fetchone() else False
 
-    def is_existsUserLog(self,user):
+    def is_existsUserLog(self,user)->bool:
         '''检查是否存在用户记录'''
         self.curs.execute("select * from usersLog where user=?",(user,))
         return True if self.curs.fetchone() else False
@@ -128,7 +128,8 @@ if __name__=="__main__":
     db.add_userData(["ts","187"])
     db.add_userData(["ba","135"])
     db.add_friendData(["ts","ba"])
-    print(db.query_userPassword("ts"))
+    db.add_friendData(["ts","ok"])
+    print(db.query_userFriends("ts"))
     db.update_userPassword("ts","110")
     print(db.query_userPassword("ba"))
     print(db.show_tableinfo("usersData"))

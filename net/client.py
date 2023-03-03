@@ -1,37 +1,30 @@
 import socket
 from threading import Thread
 import json
+from net.constent import *
 class TCPClient:
     def __init__(self,host,port):
         self.host=host
         self.port=port
         self.tcp=socket.socket()
-        self.msg={"item":None,"user":None,"password":None} 
+        self.data={"item":None,"user":None,"password":None} 
         self.tcp.connect((self.host,self.port))
 
-    def setUser(self,name):
-        self.msg['user']=name
-
-    def setPassword(self,password):
-        self.msg['password']=password
-
-    def setMsg(self,item):
+    def setData(self,data):
         '''
         item:verify(验证登录),register(注册账号),modify(修改密码)
         '''
-        self.msg['item']=item
-
+        self.data=data
     def recvMsg(self):                     
         recv=self.tcp.recv(1024)
         if recv:
             return json.loads(recv)
         else:
             self.close()
-            print("close")
+            return {"item":"quit","result":False,"error":ERROR_CONNECT_QUIT} 
 
     def sendMsg(self):
-        data=json.dumps(self.msg)
-        self.tcp.send(data.encode())
+        self.tcp.send(json.dumps(self.data).encode())
 
     def close(self):
         self.tcp.close()

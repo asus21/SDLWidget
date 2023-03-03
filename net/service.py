@@ -9,6 +9,14 @@ import sys
 sys.path.append('.')
 sys.path.append("..")
 from utils.alert import alert
+from constent import *
+#ERROR_NOT_EXITUSER="Dones't exit the user,please register"
+#ERROR_NOT_CORRECTPASSWORD="Password isn't correct "
+#ERROR_NULL_USER="The username is empty"
+#ERROR_NULL_PASSWORD="The password is empty"
+#ERROR_DIFFER_PASSWORD="It's different from twice password input"
+#ERROR_FAIL_TO_OPERATEDATABASE="Fail to operate database"
+#ERROR_CONNECT_QUIT="Service is closed"
 class TCPService:
     '''tcp服务器主要用于信息验证'''
     def __init__(self,addr,port):
@@ -26,37 +34,50 @@ class TCPService:
         '''主函数用于实现服务器功能'''
         self.db=Database("dbChat.db")
         self.db.create_usersTable()
-        Thread(target=self.connect).start()#在子线程中等代客户端连接防止主线程阻塞
+        Thread(target=self.connect,daemon=True).start()#在子线程中等代客户端连接防止主线程阻塞
         while self.isRun:
             if not self.queue.empty():
-                msg={"item":None,'result':None}
+                msg={"item":None,'result':None,'error':None}
                 data=self.queue.get()
                 if data['item']=='register':
-                    msg["item"]='register'
-                    try:
-                        self.db.add_userData([data["user"],data['password']])
-                        msg["result"]=True
-                    except:
-                        msg["result"]=False
-                elif data['item']=='verify':
-                    msg["item"]='verify'
-                    if not self.db.is_existsUser(data['user']):
-                        msg['result']=False
-                    else:
-                        try:
-                            msg["friends"]=self.db.query_userFriends(data["user"])
+                    if self.__checkUser(data,msg) and self.__checkPassword(data,msg) and self.__checkAgain(data,msg):
+                        msg["item"]='register'
+                        try:              
+                            self.db.add_userData([data["user"],data['password']])
                             msg["result"]=True
                         except:
                             msg["result"]=False
+                            msg['error']=ERROR_FAIL_TO_OPERATEDATABASE
+                elif data['item']=='verify':
+                    msg["item"]='verify'
+                    if self.__checkUser(data,msg) and self.__checkPassword(data,msg):
+                        if not self.db.is_existsUser(data['user']):
+                            msg['result']=False
+                            msg['error']=ERROR_NOT_EXITUSER
+                        else:
+                            try:
+                                if self.db.query_userPassword(data["user"])==data['password']:
+                                    msg["friends"]=self.db.query_userFriends(data["user"])
+                                    msg["result"]=True
+                                else:
+                                    msg['result']=False
+                                    msg["error"]=ERROR_NOT_CORRECTPASSWORD
+                            except:
+                                msg["result"]=False
+                                msg['error']=ERROR_FAIL_TO_OPERATEDATABASE
                 elif data['item']=='modify':
                     msg["item"]='modify'
-                    try:
-                        self.db.update_userPassword(data['user'],data['password'])
-                        msg["result"]=True
-                    except:
-                        msg["result"]=False
-
+                    if self.__checkUser(data,msg) and self.__checkPassword(data,msg):
+                        try:
+                            self.db.update_userPassword(data['user'],data['password'])
+                            msg["result"]=True
+                        except:
+                            msg["result"]=False
+                            msg["error"]=ERROR_NOT_CORRECTPASSWORD
+                elif data['item']=='quit':
+                    break
                 self.sendMsg(data['connect'],json.dumps(msg).encode())
+        self.close()
 
     def connect(self):
         '''等待链接'''
@@ -66,9 +87,32 @@ class TCPService:
                 assert False,print("\r>> (tcp)link to address:",addr,end="\n>> ")
             except:
                 pass
-            td=Thread(target=self.recvMsg,args=(conn,))
-            td.start()
-
+            Thread(target=self.recvMsg,args=(conn,),daemon=True).start()
+    def __checkUser(self,data,msg):
+        if data["user"]:
+            msg['result']=True
+            return True
+        else:
+            msg['result']=False
+            msg['error']=ERROR_NULL_USER
+            return False
+            
+    def __checkPassword(self,data,msg):
+        if data['password']:
+            msg['result']=True
+            return True
+        else:
+            msg['result']=False
+            msg['error']=ERROR_NULL_PASSWORD
+            return False
+    def __checkAgain(self,data,msg):
+        if data['password']==data['again']:
+            msg['result']=True
+            return True
+        else:
+            msg['result']=False
+            msg['error']=ERROR_DIFFER_PASSWORD
+            return False
     def sendMsg(self,conn,msg):                     
         '''发送消息'''
         conn.send(msg)
@@ -85,16 +129,23 @@ class TCPService:
             else:
                 conn.close()
                 try:
-                    assert False,print("exits",end="\n>> ")
+                    assert False,print("(tcp)exits",end="\n>> ")
                 except:
                     pass
                 break
-
+    def shutdown(self):
+        self.queue.put({"item":"quit"})
     def close(self):
         '''关闭服务端'''
+        while not self.queue.empty():
+            msg={"item":quit,'result':False,'error':ERROR_CONNECT_QUIT}
+            data=self.queue.get()
+            self.sendMsg(data['connect'],json.dumps(msg).encode())
+            data['connect'].close()
         self.tcp.close()
         self.db.close()
         self.isRun=False
+        print("all exit")
 
 class UDPService:
     '''udp服务器主要用于信息发送'''
@@ -113,13 +164,14 @@ class UDPService:
         self.db=Database("dbChat.db")
         self.db.create_usersLogTable()
         self.db.create_friendsTable()
-        Thread(target=self.recvMsg).start()
+        Thread(target=self.recvMsg,daemon=True).start()
         while self.isRun:
             if not self.queue.empty():
                 msg={"sendUser":None,'msg':None}
                 data=self.queue.get()
                 if data['item']=="exit":
                     self.db.delete_userLogData(data["user"])
+                    alert("(udp)exits")
                 elif data["item"]=="send":
                     msg["sendUser"]=data["user"]
                     msg["msg"]=data["msg"]
@@ -138,6 +190,9 @@ class UDPService:
                     self.db.add_friendData([data["user"],data["friend"]])
                 elif data["item"]=="deletefriend":
                     self.db.delete_friendData(data["user"])
+                elif data["item"]=="quit":
+                    break
+        self.close()
 
     def recvMsg(self):
         '''接受消息'''
@@ -156,6 +211,8 @@ class UDPService:
         '''发送消息'''
         self.udp.sendto(json.dumps(msg).encode(),addr)
 
+    def shutdown(self):
+        self.queue.put({'item':'quit'})
     def close(self):
         '''关闭服务端'''
         self.udp.close()

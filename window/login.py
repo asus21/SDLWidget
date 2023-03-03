@@ -1,6 +1,7 @@
 import curses
 from widget.editText import EditText
 from widget.label import Label
+from widget import color
 import json
 import time
 radio_h=0.6
@@ -10,9 +11,8 @@ login_user="User:"
 login_password="Password:"
 login_button_register="Register"
 login_button_login="Login"
-login_userEdit_hint="please input your account"
-login_registerEdit_hint="please input your password"
-login_alert="doesn't exists the user"
+login_userEdit_hint="Please input your account"
+login_registerEdit_hint="Please input your password"
 class LoginWindow():
     def __init__(self,h,w,y,x):
         self.h=h
@@ -41,12 +41,10 @@ class LoginWindow():
         self.button_login=Label(self.__subwin,3,10,self.__sub_y+3*int(self.__sub_h/4),self.__sub_x+3*int(self.__sub_w/5))
         self.button_login.setText(login_button_login)
     def refresh(self):  
-#        self.__swift()
         self.__window.refresh()
         self.__subwin.refresh()
     def alert(self,alert):
-        curses.init_pair(3,curses.COLOR_RED,0)
-        self.__subwin.addstr(1,(self.__sub_w-len(alert))//2,alert,curses.color_pair(3))
+        self.__subwin.addstr(1,(self.__sub_w-len(alert))//2,alert,color.red)
         self.__subwin.refresh()
         y,x=curses.getsyx()
         time.sleep(2)
@@ -62,7 +60,9 @@ class LoginWindow():
     def ungetmouse(self):
         curses.ungetmouse(1,self.text_user.x,self.text_user.y,0,1)
     def getText(self):
-        data={"user":self.text_user.getText(),"password":self.text_password.getText()} 
+        data={"item":"verify",\
+                "user":self.text_user.getText(),\
+                "password":self.text_password.getText()} 
         return data
     def __swift(self):
         if self.__count==0:
@@ -73,12 +73,10 @@ class LoginWindow():
             self.text_password.setfocus()
         elif self.__count==2:
             curses.curs_set(0)
-            self.__subwin.move(3*int(self.__sub_h/4),int(self.__sub_w/5))
-            self.__subwin.refresh()
+            self.button_register.setfocus()
         elif self.__count==3:
             curses.curs_set(0)
-            self.__subwin.move(3*int(self.__sub_h/4),3*int(self.__sub_w/5))
-            self.__subwin.refresh()
+            self.button_login.setfocus()
     def __event(self,event):
         if event!=curses.KEY_MOUSE:
             if event==curses.KEY_UP:

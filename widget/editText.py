@@ -1,26 +1,26 @@
 import curses
+from widget import color
 class EditText:
     def __init__(self,top,h,w,y,x):
         self.top=top
         self.h,self.w=h,w
         self.y,self.x=y,x
-        self.__boxText=top.subwin(h,w,y,x)
-        self.__editText=top.subwin(h-2,w-2,y+1,x+1)
-        self.__boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.__light=False
-        self.__msg=""
         self.__cur_y=0
         self.__cur_x=0
         self.__str_x=0
-        self.__isActive=False 
+        self.__boxText=top.subwin(h,w,y,x)
+        self.__boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)
+        self.__editText=top.subwin(h-2,w-2,y+1,x+1)
+        self.__msg=""
         self.__hint=""
+        self.__isActive=False 
+        self.__light=False
         self.__isClear=False
     def highlight(self):
         y,x=curses.getsyx()
-        curses.init_pair(2,curses.COLOR_RED,0)
-        self.__boxText.attron(curses.A_BOLD|curses.color_pair(2))
+        self.__boxText.attron(color.red)
         self.__boxText.box(curses.ACS_VLINE,curses.ACS_HLINE)
-        self.__boxText.attroff(curses.A_BOLD|curses.color_pair(2))
+        self.__boxText.attroff(color.red)
         self.__boxText.refresh()
         curses.setsyx(y,x)
         curses.doupdate()
@@ -38,12 +38,9 @@ class EditText:
         self.__hint=hint
         self.showHint()
     def showHint(self):
-        curses.init_color(curses.COLOR_WHITE,500,500,500)
-        curses.init_pair(1,curses.COLOR_WHITE,0)
-        self.__editText.addstr(0,0,self.__hint,curses.color_pair(1))
+        self.__editText.addstr(0,0,self.__hint,color.gray)
         self.__editText.move(0,0)
         self.__isClear=True
-        curses.init_color(curses.COLOR_WHITE,1000,1000,1000)
     def clearHint(self):
         if self.__isClear:
             self.__editText.clear()
