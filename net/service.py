@@ -123,6 +123,7 @@ class TCPService:
             recv=conn.recv(1024)
             if(recv):
                 data=json.loads(recv)
+                alert(data)
                 data["connect"]=conn 
                 self.queue.put(data)
                 alert(data)

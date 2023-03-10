@@ -11,7 +11,7 @@ from window.register import RegisterWindow
 from window.friend import FriendWindow
 from net.client import TCPClient
 from net.client import UDPClient
-from database import dbLocal
+from net.client import Client
 from utils.IP import get_ip
 locale.setlocale(locale.LC_ALL, '')
 host=get_ip()
@@ -38,7 +38,8 @@ class MainWindow:
         self.win_output=None
         self.tcp=None
         self.udp=None
-
+        self.client=Client("./config.json")
+        
     def create_win_login(self):
         '''创建登录窗口'''
         self.win_login=LoginWindow(self.h,self.w,0,0)
@@ -103,8 +104,10 @@ class MainWindow:
     def refresh_win_right(self):
         '''朋友列表刷新'''
         self.win_friend.refresh()
+
     def accept_msg(self):
         self.msg.put(self.udp.recvMsg)
+
     def close(self):
         '''关闭界面'''
         self.udp.close()
@@ -112,19 +115,14 @@ class MainWindow:
 
     def button_login(self):
         '''登录按钮函数'''
-        tcp=TCPClient(host,TCPport)
         data=self.win_login.getText()
-        tcp.setData(data)
-        tcp.sendMsg()
-        msg=tcp.recvMsg()
-        tcp.close()
+        self.client.setData(data)
+        msg=self.client.verify()
         if msg["result"]:
             self.root.erase()
             self.win_login=None
             self.root.refresh()
             self.show_win_chat()
-            self.udp=UDPClient(host,UDPport)
-            self.udp.setUser(data['user'])
         else:
             Thread(target=self.win_login.alert,args=(msg['error'],),daemon=True).start()
 
@@ -141,11 +139,8 @@ class MainWindow:
     def button_sure(self):
         '''确认按钮'''
         data=self.win_register.getData()
-        tcp=TCPClient(host,TCPport)
-        tcp.setData(data)
-        tcp.sendMsg()
-        msg=tcp.recvMsg()
-        tcp.close()
+        self.client.setData(data)
+        mag=self.client.register()
         if msg["result"]:
             self.root.erase()
             self.win_register=None
@@ -161,9 +156,11 @@ class MainWindow:
         self.win_register=None
         self.root.refresh()
         self.show_win_login()
+
     def event_win_output_show_get(self):
         '''输出框接受消息事件'''
         con=self.udp.recvMsg()
+
     def event_win_output_show_input(self):
         pass
 
@@ -172,9 +169,7 @@ class MainWindow:
         if ch==ascii.ctrl("s"):
             msg=self.win_input.getText()
             friend=self.win_friend.getLineText()
-            self.udp.setMsg(msg)
-            self.udp.setFriend(self.win_friend.getLineText())
-            self.udp.sendMsg()
+            self.client.sendMsg(friend,msg)
             self.win_input.clean()
         elif ch==ascii.ctrl("a"):
             self.root.erase()

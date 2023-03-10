@@ -4,16 +4,74 @@ import json
 from net.constent import *
 class Client:
     def __init__(self,config='config.json'):
-        with open(config) as f:
-            date=json.load(f)
-        host=data["remote_ip"]
-        port_tcp=data['port_tcp']
-        port_udp=data['port_udp']
+        with open(config) as f:#导入配置文件
+            data=json.load(f)
+        self.host=data["server_ip"]
+        self.port_tcp=data['port_tcp']
+        self.port_udp=data['port_udp']
+        self.udp=None
 
-    def setUser(self,data):
-        self.tcp=TCPClient(host,port_tcp)
+    def setData(self,data):
+        '''设置用户信息'''
+        self.data=data 
 
+    def __error__(func):
+        def wrapper(self):
+            try:
+                return func(self)
+            except Exception as e:
+#                raise e
+                return {"result":False,"error":ERROR_NETWORK_FAIL}
+        return wrapper
 
+    @__error__
+    def verify(self):
+        '''登录'''
+        data={"item":"verify"}
+        data.update(self.data)
+        tcp=TCPClient(self.host,self.port_tcp)
+        tcp.send(data)
+        msg=tcp.recvMsg()
+        tcp.close()
+        if msg['result']:
+            self.udp=UDPClient(self.host,self.port_udp)
+            self.udp.setUser(data["user"])
+        return msg
+
+    def register(self):
+        '''注册'''
+        data={"item":"register"}
+        data.update(self.data)
+        tcp=TCPClient(self.host,self.port_tcp)
+        tcp.send(data)
+        msg=tcp.recvMsg()
+        tcp.close()
+        return msg
+        
+    def modify(self):
+        '''修改密码'''
+        data={"item":"modify"}
+        data.update(self.data)
+        tcp=TCPClient(self.host,self.port_tcp)
+        tcp.send(data)
+        msg=tcp.recvMsg()
+        tcp.close()
+        return msg
+
+    def sendMsg(self,friend,msg):
+        '''发送消息'''
+        msg={"item":"send","user":self.data['user'],"friend":friend,"msg":msg}
+        self.udp.send(msg)
+
+    def recvMsg(self):
+        '''接受消息'''
+        return self.udp.recvMsg()
+
+    def close(self):
+        '''退出登录'''
+        self.udp.close()
+
+     
 class TCPClient:
     def __init__(self,host,port):
         self.host=host
@@ -40,6 +98,9 @@ class TCPClient:
     def sendMsg(self):
         self.tcp.send(json.dumps(self.data).encode())
 
+    def send(self,data):
+        self.tcp.send(json.dumps(data).encode())
+
     def close(self):
         self.tcp.close()
 
@@ -50,7 +111,7 @@ class UDPClient:
         self.udp=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.msg={"item":None,"user":None,"friend":None,"msg":None}
 
-    def recvMsg(self)->str:
+    def recvMsg(self):
         '''返回接受消息
         return data={"sendUser":None,"msg":None}
         '''
@@ -83,6 +144,9 @@ class UDPClient:
 
     def sendMsg(self)->None:
         self.udp.sendto(json.dumps(self.msg).encode(),(self.host,self.port))
+
+    def send(self,msg):
+        self.udp.sendto(json.dumps(msg).encode(),(self.host,self.port))
 
     def close(self):
         self.msg["item"]="exit"
