@@ -20,6 +20,9 @@ class TextWindow:
         self.__func=None
         self.__editable=True
         self.__subWiget=[]
+    def erase(self):
+        self.__win.erase()
+        self.__subwin.erase()
     def addstr(self,y,x,str):
         self.__win.addstr(y,x,str)
     def addWidght(self,widget):

@@ -1,18 +1,17 @@
 #-*- coding: UTF-8 -*-
 import curses
-import locale
-import time
 from curses import ascii
 from threading import Thread
-from queue import Queue
+import time
 from widget.textWindow import TextWindow
 from window.login import LoginWindow
 from window.register import RegisterWindow
 from window.friend import FriendWindow
 from net.client import TCPClient
 from net.client import UDPClient
-from database import dbLocal
 from utils.IP import get_ip
+import locale
+
 locale.setlocale(locale.LC_ALL, '')
 host=get_ip()
 TCPport=8080
@@ -30,40 +29,30 @@ class MainWindow:
         self.root.nodelay(0)
         self.root.keypad(True)
         self.root.untouchwin()
-        self.msg=Queue()
         self.win_login=None
-        self.win_register=None
         self.win_input=None
-        self.win_friend=None
-        self.win_output=None
-        self.tcp=None
-        self.udp=None
-
+        self.win_register=None
     def create_win_login(self):
         '''创建登录窗口'''
         self.win_login=LoginWindow(self.h,self.w,0,0)
         self.win_login.button_login_bind(self.button_login)
         self.win_login.button_register_bind(self.button_register)
-
     def create_win_register(self):
         '''注册窗口'''
         self.win_register=RegisterWindow(self.h,self.w,0,0)
         self.win_register.button_sure_bind(self.button_sure)
         self.win_register.button_return_bind(self.button_reture)
-
     def create_win_head(self):
         '''界面头部'''
         self.win_head=TextWindow(4,self.w,0,0)
         self.win_head.box(".",".")
         self.win_head.addstr(4//2,self.w//3,"|Welecome to myChat|")
-
     def create_win_output(self):
         '''输出窗口'''
         self.win_output=TextWindow(self.h-5,self.w//2,5,0)
         self.win_output.box(".",".")
         self.win_output.addstr(1,0,"output:")
         self.win_output.setEditable(False)
-
     def create_win_input(self):
         '''输入窗口'''
         self.win_input=TextWindow((self.h-5)//2,self.w//2,5+(self.h-5)//2,self.w//2)
@@ -77,7 +66,7 @@ class MainWindow:
         self.win_friend.box(".",".")
         self.win_friend.addstr(1,0,"friend:")
         self.win_friend.setEditable(False)
-        self.win_friend.setText("admin")
+        self.win_friend.setText("a\nb\bhello world")
         self.win_friend.bind(self.event_win_friend)
 
     def refresh_win_login(self):
@@ -103,8 +92,7 @@ class MainWindow:
     def refresh_win_right(self):
         '''朋友列表刷新'''
         self.win_friend.refresh()
-    def accept_msg(self):
-        self.msg.put(self.udp.recvMsg)
+
     def close(self):
         '''关闭界面'''
         self.udp.close()
@@ -126,7 +114,7 @@ class MainWindow:
             self.udp=UDPClient(host,UDPport)
             self.udp.setUser(data['user'])
         else:
-            Thread(target=self.win_login.alert,args=(msg['error'],),daemon=True).start()
+            Thread(target=self.win_login.alert,args=(msg['error'],)).start()
 
     def button_register(self):
         '''注册按钮函数'''
@@ -151,9 +139,8 @@ class MainWindow:
             self.win_register=None
             self.root.refresh()
             self.show_win_login()
-            Thread(target=self.accept_msg,daemon=True).start()
         else:
-            Thread(target=self.win_register.alert,args=(msg['error'],),daemon=True).start()
+            Thread(target=self.win_register.alert,args=(msg['error'],)).start()
             
     def button_reture(self):
         '''返回按钮'''
@@ -161,11 +148,6 @@ class MainWindow:
         self.win_register=None
         self.root.refresh()
         self.show_win_login()
-    def event_win_output_show_get(self):
-        '''输出框接受消息事件'''
-        con=self.udp.recvMsg()
-    def event_win_output_show_input(self):
-        pass
 
     def event_win_input(self,ch):
         '''输入框事件'''
@@ -184,17 +166,20 @@ class MainWindow:
         elif ch==ascii.ctrl("q"):
             self.root.erase()
             self.win_input=None
-            self.win_friend=None
-            self.win_output=None
             self.udp.close()
+            self.win_output.erase()
             self.root.refresh()
             self.show_win_login()
+            self.refresh_win_login()
 
     def event_win_friend(self,ch):
         '''朋友列表事件'''
         if ch==ascii.ctrl("a"):
             self.win_friend.highlightLine()
             y,x=self.win_input.getCursor()
+#            self.root.addstr(0,0,str(y)+" "+str(x))
+#            self.root.move(5,5)
+#            self.root.refresh()
         elif ch==ascii.ctrl("d"):
             self.win_friend.unhighlightLine()
 
@@ -214,24 +199,18 @@ class MainWindow:
                 elif self.win_register:
                     self.win_register.event(ch)
                 else:
-                    if self.win_output:
-                        self.win_input.event(ch)
-                    if self.win_friend:
-                        self.win_friend.event(ch)
-                    if self.win_output:
-                        self.win_output.event(ch)
+                    self.win_input.event(ch)
+                    self.win_output.event(ch)
+                    self.win_friend.event(ch)
             else:
                 if self.win_login:
                     self.win_login.event(ch)
                 elif self.win_register:
                     self.win_register.event(ch)
-                else:
-                    if self.win_output:
-                        self.win_input.event(ch)
-                    if self.win_friend:
-                        self.win_friend.event(ch)
-                    if self.win_output:
-                        self.win_output.event(ch)
+                else:   
+                    self.win_input.event(ch)
+                    self.win_output.event(ch)
+                    self.win_friend.event(ch)
 
     def show_win_login(self):
         "显示登录窗口"
