@@ -36,8 +36,6 @@ class MainWindow:
         self.win_input=None
         self.win_friend=None
         self.win_output=None
-        self.tcp=None
-        self.udp=None
         self.client=Client("./config.json")
         
     def create_win_login(self):
@@ -111,7 +109,7 @@ class MainWindow:
 
     def close(self):
         '''关闭界面'''
-        self.udp.close()
+        self.client.close()
         curses.endwin()
 
     def button_login(self):
@@ -182,7 +180,7 @@ class MainWindow:
             self.win_input=None
             self.win_friend=None
             self.win_output=None
-            self.udp.close()
+            self.client.close()
             self.root.refresh()
             self.show_win_login()
 

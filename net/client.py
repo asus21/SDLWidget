@@ -67,13 +67,17 @@ class Client:
         return msg
 
     def __handleMsg(self):
+        '''运行在子线程中将发送和接受的消息写入数据库'''
         self.db=dbLocal("dblocal.db")
         self.db.create_msgTable()
         Thread(target=self.recvMsg,daemon=True).start()
         while True:
             if not self.queue.empty():
                 cmd=self.queue.get()
-                self.db.add_msgData(cmd)
+                if cmd="close":
+                    break
+                else:
+                    self.db.add_msgData(cmd)
 
     def sendMsg(self,friend,msg):
         '''发送消息'''
@@ -89,6 +93,7 @@ class Client:
 
     def close(self):
         '''退出登录'''
+        self.queue.put("close")
         self.udp.close()
 
      
