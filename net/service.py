@@ -196,11 +196,11 @@ class UDPService:
             recv,addr=self.udp.recvfrom(1024)
             try:
                assert False,print("\r>> (udp)link to address:",addr,end="\n>> ")
-               alert(data)
             except:
                 pass
             if recv:
                 data=json.loads(recv)
+                alert(data)
                 data["address"]=addr 
                 self.queue.put(data)
             

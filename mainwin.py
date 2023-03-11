@@ -79,7 +79,7 @@ class MainWindow:
         self.win_friend.box(".",".")
         self.win_friend.addstr(1,0,"friend:")
         self.win_friend.setEditable(False)
-        self.win_friend.setText("admin")
+        self.win_friend.setText("admin\ndemo")
         self.win_friend.bind(self.event_win_friend)
 
     def refresh_win_login(self):
@@ -190,7 +190,7 @@ class MainWindow:
         '''朋友列表事件'''
         if ch==ascii.ctrl("a"):
             self.win_friend.highlightLine()
-            y,x=self.win_input.getCursor()
+#            y,x=self.win_input.getCursor()
             self.win_input.setEditable(True)
         elif ch==ascii.ctrl("d"):
             self.win_friend.unhighlightLine()

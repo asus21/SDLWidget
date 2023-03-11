@@ -74,7 +74,7 @@ class TextWindow:
             except:
                 text=None
         else:
-            self.__msg[self.__cur_y]
+            text=self.__msg[self.__cur_y]
         return text
     def setText(self,text):
         self.__msg=text.split("\n")
