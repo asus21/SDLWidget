@@ -71,6 +71,7 @@ class MainWindow:
         self.win_input.box(".",".")
         self.win_input.addstr(1,0,"intput:")
         self.win_input.bind(self.event_win_input)
+        self.win_input.setEditable(False)
 
     def create_win_friend(self):
         '''创建朋友列表窗口'''
@@ -190,8 +191,10 @@ class MainWindow:
         if ch==ascii.ctrl("a"):
             self.win_friend.highlightLine()
             y,x=self.win_input.getCursor()
+            self.win_input.setEditable(True)
         elif ch==ascii.ctrl("d"):
             self.win_friend.unhighlightLine()
+            self.win_input.setEditable(False)
 
     def root_event(self):
         '''根窗口事件'''

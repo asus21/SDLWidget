@@ -1,7 +1,11 @@
 import socket
 from threading import Thread
 import json
+from queue import Queue
 from net.constent import *
+import sys
+sys.path.append("..")
+from database.dblocal import dbLocal
 class Client:
     def __init__(self,config='config.json'):
         with open(config) as f:#导入配置文件
@@ -10,12 +14,13 @@ class Client:
         self.port_tcp=data['port_tcp']
         self.port_udp=data['port_udp']
         self.udp=None
+        self.queue=Queue()
 
     def setData(self,data):
         '''设置用户信息'''
         self.data=data 
 
-    def __error__(func):
+    def __error(func):
         def wrapper(self):
             try:
                 return func(self)
@@ -24,7 +29,7 @@ class Client:
                 return {"result":False,"error":ERROR_NETWORK_FAIL}
         return wrapper
 
-    @__error__
+    @__error
     def verify(self):
         '''登录'''
         data={"item":"verify"}
@@ -36,8 +41,10 @@ class Client:
         if msg['result']:
             self.udp=UDPClient(self.host,self.port_udp)
             self.udp.setUser(data["user"])
+            Thread(target=self.__handleMsg).start()
         return msg
 
+    @__error
     def register(self):
         '''注册'''
         data={"item":"register"}
@@ -47,7 +54,8 @@ class Client:
         msg=tcp.recvMsg()
         tcp.close()
         return msg
-        
+    
+    @__error
     def modify(self):
         '''修改密码'''
         data={"item":"modify"}
@@ -58,14 +66,26 @@ class Client:
         tcp.close()
         return msg
 
+    def __handleMsg(self):
+        self.db=dbLocal("dblocal.db")
+        self.db.create_msgTable()
+        Thread(target=self.recvMsg,daemon=True).start()
+        while True:
+            if not self.queue.empty():
+                cmd=self.queue.get()
+                self.db.add_msgData(cmd)
+
     def sendMsg(self,friend,msg):
         '''发送消息'''
-        msg={"item":"send","user":self.data['user'],"friend":friend,"msg":msg}
-        self.udp.send(msg)
+        data={"item":"send","user":self.data['user'],"friend":friend,"msg":msg}
+        self.queue.put([friend,1,msg])
+        self.udp.send(data)
+    
 
     def recvMsg(self):
         '''接受消息'''
-        return self.udp.recvMsg()
+        recv=self.udp.recvMsg()
+        self.queue.put([recv["sendUser"],0,recv["msg"]])
 
     def close(self):
         '''退出登录'''
@@ -115,7 +135,7 @@ class UDPClient:
         '''返回接受消息
         return data={"sendUser":None,"msg":None}
         '''
-        recv=self.udp.recv(1024)
+        recv=self.udp.recvfrom(1024)
 
         if recv:
             data=json.loads(recv)

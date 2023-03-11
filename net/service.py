@@ -27,8 +27,6 @@ class TCPService:
         self.tcp.listen(5)
         self.isRun=True
         self.queue=Queue()
-#        self.db=Database("dbChat.db")
-#        self.db.create_usersTable()
 
     def main(self):
         '''主函数用于实现服务器功能'''
@@ -157,9 +155,6 @@ class UDPService:
         self.udp.bind((addr,port))
         self.isRun=True
         self.queue=Queue()
-#        self.db=Database("dbChat.db")
-#        self.db.create_usersLogTable()
-#        self.db.create_friendsTable()
 
     def main(self):
         self.db=Database("dbChat.db")
@@ -201,6 +196,7 @@ class UDPService:
             recv,addr=self.udp.recvfrom(1024)
             try:
                assert False,print("\r>> (udp)link to address:",addr,end="\n>> ")
+               alert(data)
             except:
                 pass
             if recv:
