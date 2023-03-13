@@ -77,7 +77,10 @@ class TextWindow:
             text=self.__msg[self.__cur_y]
         return text
     def setText(self,text):
-        self.__msg=text.split("\n")
+        if isinstance(text,str):
+            self.__msg=text.split("\n")
+        else:
+            self.__msg=text
         for i in range(len(self.__msg)):
             if i<self.__sub_h:
                 self.__subwin.addstr(i,1,self.__msg[i])

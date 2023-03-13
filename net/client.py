@@ -5,6 +5,7 @@ from queue import Queue
 from net.constent import *
 import sys
 sys.path.append("..")
+import os
 from database.dblocal import dbLocal
 class Client:
     def __init__(self,config='config.json'):
@@ -19,6 +20,13 @@ class Client:
     def setData(self,data):
         '''设置用户信息'''
         self.data=data 
+
+    def create_usr(self):
+        if not os.path.exists("/data/data/com.termux/files/home/myChat/usr/"+data["user"]):
+            os.mkdir("/data/data/com.termux/files/home/myChat/usr/"+data["user"])
+        os.chdir("/data/data/com.termux/files/home/myChat/usr/"+data["user"])
+        self.db=dbLocal("dblocal.db")
+        self.db.create_msgTable()
 
     def __error(func):
         def wrapper(self):
@@ -39,6 +47,7 @@ class Client:
         msg=tcp.recvMsg()
         tcp.close()
         if msg['result']:
+            self.create_usr()
             self.udp=UDPClient(self.host,self.port_udp)
             self.udp.setUser(data["user"])
             Thread(target=self.__handleMsg).start()
@@ -68,16 +77,16 @@ class Client:
 
     def __handleMsg(self):
         '''运行在子线程中将发送和接受的消息写入数据库'''
-        self.db=dbLocal("dblocal.db")
-        self.db.create_msgTable()
+        db=dbLocal("dblocal.db")
+        db.create_msgTable()
         Thread(target=self.recvMsg,daemon=True).start()
         while True:
             if not self.queue.empty():
                 cmd=self.queue.get()
-                if cmd="close":
+                if cmd=="close":
                     break
                 else:
-                    self.db.add_msgData(cmd)
+                    db.add_msgData(cmd)
 
     def sendMsg(self,friend,msg):
         '''发送消息'''
@@ -85,16 +94,35 @@ class Client:
         self.queue.put([friend,1,msg])
         self.udp.send(data)
     
+    def getSendMsg(self,friend=None):
+        if friend:
+            return self.db.query_friend_send_msg(friend)
+        else:
+            return self.db.query_all_send_msg()
+    
+    def getRecvMsg(self,friend=None):
+        if friend:
+            return self.db.query_friend_recv_msg(friend)
+        else:
+            return self.db.query_all_recv_msg()
 
+    def getAllMsg(self,friend=None):
+        if friend:
+            return self.db.query_friend_msg(friend)
+        else:
+            return self.db.query_all_msg()
+            
     def recvMsg(self):
         '''接受消息'''
-        recv=self.udp.recvMsg()
-        self.queue.put([recv["sendUser"],0,recv["msg"]])
+        while True:
+            recv=self.udp.recvMsg()
+            self.queue.put([recv["sendUser"],0,recv["msg"]])
 
     def close(self):
         '''退出登录'''
         self.queue.put("close")
-        self.udp.close()
+        if self.udp:
+            self.udp.close()
 
      
 class TCPClient:
@@ -140,7 +168,7 @@ class UDPClient:
         '''返回接受消息
         return data={"sendUser":None,"msg":None}
         '''
-        recv=self.udp.recvfrom(1024)
+        recv=self.udp.recv(1024)
 
         if recv:
             data=json.loads(recv)

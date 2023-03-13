@@ -84,7 +84,7 @@ class Database:
     def query_usersLog(self,user)->str:
         '''获取用户日志'''
         self.curs.execute("select * from usersLog where user=?",(user,))
-        return self.curs.fetchone()[0]
+        return self.curs.fetchone()
 
     def show_tableinfo(self,table)->list:
         '''显示数据表信息'''
@@ -135,4 +135,6 @@ if __name__=="__main__":
     print(db.show_tableinfo("usersData"))
     db.drop_table("usersData")
     db.drop_table("friendsData")
+#    print(db.is_existsUserLog("admin"))
+#    print(db.query_usersLog("ts"))
     db.close()

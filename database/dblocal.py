@@ -31,14 +31,30 @@ class dbLocal:
         sele.curs.execute("delete from msgTable where friend=? and send=? and time=?",(friend,send,time))
         self.commit()
 
-    def query_all_magData(self)->list:
+    def query_all_msg(self)->list:
         '''获取用户所有朋友消息'''
         self.curs.execute("select * from msgTable")
         return self.curs.fetchall()
-
-    def query_friend_msgData(self,friend):
+    
+    def query_friend_msg(self,friend):
         self.curs.execute("select * from msgTable where friend=?",(friend,))
         return self.curs.fetchall()
+
+    def query_all_send_msg(self):
+        self.curs.execute("select * from msgTable where send=1")
+        return self.curs.fetchall()
+
+    def query_friend_send_msg(self,friend):
+        self.curs.execute("select * from msgTable where friend=? and send=1",(friend,))
+        return self.curs.fetchall()
+
+    def query_all_recv_msg(self):
+        self.curs.execute("select * from msgTable where send=0")
+        return self.curs.fetchall()
+
+    def query_friend_recv_msg(self,friend):
+        self.curs.execute("select * from msgTable where friend=? and send=0",(friend,))
+        return self.curs.fetchall() 
 
     def show_tableinfo(self,table)->list:
         '''显示数据表信息'''
@@ -63,8 +79,16 @@ class dbLocal:
 if __name__=="__main__":
     db=dbLocal("dblocal.db")
     db.create_msgTable()
-    db.add_msgData(["ts",1,"hello world"])
+    db.add_msgData(["me",1,"hello world"])
     db.add_msgData(["me",0,"I'm not fine"])
-    print(db.query_all_magData())
-    print(db.query_friend_msgData("me"))
+    db.add_msgData(["me",0,"ok"])
+    db.add_msgData(["me",1,"hi"])
+    db.add_msgData(["ts",0,"ok"])
+    db.add_msgData(["ts",1,"hi"])
+    print(db.query_all_msg())
+    print(db.query_friend_msg("me"))
+    print(db.query_all_recv_msg())
+    print(db.query_all_send_msg())
+    print(db.query_friend_send_msg("me"))
+    print(db.query_friend_recv_msg("me"))
     db.close()

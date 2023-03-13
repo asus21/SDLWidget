@@ -32,6 +32,7 @@ class TCPService:
         '''主函数用于实现服务器功能'''
         self.db=Database("dbChat.db")
         self.db.create_usersTable()
+        self.db.add_userData(["admin","admin"])
         Thread(target=self.connect,daemon=True).start()#在子线程中等代客户端连接防止主线程阻塞
         while self.isRun:
             if not self.queue.empty():
@@ -42,6 +43,8 @@ class TCPService:
                         msg["item"]='register'
                         try:              
                             self.db.add_userData([data["user"],data['password']])
+                            self.db.add_friendData([data["user"],"admin"])
+                            self.db.add_friendData(["admin",data["user"]])
                             msg["result"]=True
                         except:
                             msg["result"]=False
@@ -174,7 +177,7 @@ class UDPService:
                     if self.db.is_existsUserLog(data["friend"]):
                         _,ip,port=self.db.query_usersLog(data["friend"])
                         try: 
-                            assert False,print("sendto:",(ip,port))
+                            assert False,print("sendto:",(ip,port)," msg:",msg)
                         except:
                             pass
                         self.sendMsg(msg,(ip,port))
