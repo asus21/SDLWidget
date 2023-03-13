@@ -114,6 +114,29 @@ class TextWindow:
                 return False
         else:
             return False
+    def __slide_down(self,row):
+        if row<0:
+            row=0
+            if self.__scroll>0:
+                self.__subwin.scroll(-1)
+                self.__bottom.append(self.__msg[-1-len(self.__bottom)])
+                if len(self.__top)>0:
+                    txt=self.__top.pop()
+                    self.__subwin.insstr(row,1,txt)
+                self.__scroll-=1
+        return row
+
+    def __slide_up(self,row):
+        if row>=self.__sub_h:
+            self.__top.append(self.__msg[self.__scroll])
+            row=self.__sub_h-1
+            self.__subwin.scroll(1)
+            if self.__bottom:
+                txt=self.__bottom.pop()
+                self.__subwin.insstr(row,1,txt)
+            self.__scroll+=1
+        return row
+
     def event(self,event):
         curses.curs_set(1)
         row=self.__cur_y
@@ -130,44 +153,21 @@ class TextWindow:
                 #如果实际行数大于0行数就减一
                     if row+self.__scroll>0:
                         row=row-1
+                        row=self.__slide_down(row)
                 #如果行数小于0行数就不变，滑动计数减一
-                        if row<0:
-                            row=0
-                            if self.__scroll>0:
-                                self.__subwin.scroll(-1)
-                                self.__bottom.append(self.__msg[-1-len(self.__bottom)])
-                                if len(self.__top)>0:
-                                    txt=self.__top.pop()
-                                    self.__subwin.insstr(row,1,txt)
-                                self.__scroll-=1
                     if col>len(self.__msg[row+self.__scroll]):
                         col=len(self.__msg[row+self.__scroll])+1
                 elif event==curses.KEY_DOWN:
                     if row+self.__scroll<len(self.__msg)-1:
                         row+=1
-                    if row>=self.__sub_h:
-                        self.__top.append(self.__msg[self.__scroll])
-                        row=self.__sub_h-1
-                        self.__subwin.scroll(1)
-                        if self.__bottom:
-                            txt=self.__bottom.pop()
-                            self.__subwin.insstr(row,1,txt)
-                        self.__scroll+=1
+                        row=self.__slide_up(row)
                     if col>len(self.__msg[row+self.__scroll]):
                         col=len(self.__msg[row+self.__scroll])+1
                 elif event==curses.KEY_LEFT:
                     col=col-1
                     if col<1 and row+self.__scroll>0:
                         row=row-1
-                        if row<0:
-                            row=0
-                            if self.__scroll>0:
-                                self.__subwin.scroll(-1)
-                                self.__bottom.append(self.__msg[-1-len(self.__bottom)])
-                                if len(self.__top)>0:
-                                    txt=self.__top.pop()
-                                    self.__subwin.insstr(row,1,txt)
-                                self.__scroll-=1
+                        row=self.__slide_down(row)
                         col=len(self.__msg[self.__scroll+row])
                     if col==0 and row+self.__scroll==0:
                         col=1
@@ -176,15 +176,7 @@ class TextWindow:
                         col+=1
                     if col>len(self.__msg[row+self.__scroll])+1 and row+self.__scroll+1<len(self.__msg):
                         row=row+1
-                        if row>=self.__sub_h:
-                            self.__subwin.scroll(1)
-                            row=self.__sub_h-1
-                            self.__top.append(self.__msg[self.__scroll])
-                            row=self.__sub_h-1
-                            if self.__bottom:
-                                txt=self.__bottom.pop()
-                                self.__subwin.insstr(row,1,txt)
-                            self.__scroll+=1
+                        row=self.__slide_up(row)
                         col=1
                     elif col>=len(self.__msg[row+self.__scroll])+1:
                         col=len(self.__msg[row+self.__scroll])+1
@@ -192,21 +184,10 @@ class TextWindow:
                 if event=="\n":
                     row+=1
                     col=1 
-                #如果行数大于滑动宽度就向下滑
-                    if row>=self.__sub_h:
-                    #滑动时保存上部文本
-                        self.__top.append(self.__msg[self.__scroll])
-                        row=self.__sub_h-1
-                        self.__scroll+=1
-                        self.__subwin.scroll(1)
-                    #如果下部保存有文本则显示
-                        if self.__bottom:
-                            txt=self.__bottom.pop()
-                            self.__subwin.insstr(row,1,txt)
-                    #如果当前行数大于存储文本列表长度则添加文本
+                    row=self.__slide_up(row)
                     if len(self.__msg)<=row+self.__scroll:
                         self.__msg.append("")
-                elif ord(event)==127:
+                elif self.__editable and ord(event)==127:
                     try:
                         col-=1
                         if col<1 and row+self.__scroll>0:

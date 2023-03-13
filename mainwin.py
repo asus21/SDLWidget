@@ -8,7 +8,7 @@ from curses import ascii
 from threading import Thread
 from queue import Queue
 from widget.textWindow import TextWindow
-from widget.list import List
+from widget.list import ListWindow
 from window.login import LoginWindow
 from window.register import RegisterWindow
 from window.friend import FriendWindow
@@ -57,7 +57,7 @@ class MainWindow:
 
     def create_win_output(self):
         '''输出窗口'''
-        self.win_output=List(self.h,self.w//2,0,0)
+        self.win_output=ListWindow(self.h,self.w//2,0,0)
         self.win_output.box(".",".")
         self.win_output.addstr(1,0,"output:")
         self.win_output.setEditable(False)

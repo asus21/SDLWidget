@@ -22,9 +22,9 @@ class Client:
         self.data=data 
 
     def create_usr(self):
-        if not os.path.exists("/data/data/com.termux/files/home/myChat/usr/"+data["user"]):
-            os.mkdir("/data/data/com.termux/files/home/myChat/usr/"+data["user"])
-        os.chdir("/data/data/com.termux/files/home/myChat/usr/"+data["user"])
+        if not os.path.exists("/data/data/com.termux/files/home/myChat/usr/"+self.data["user"]):
+            os.mkdir("/data/data/com.termux/files/home/myChat/usr/"+self.data["user"])
+        os.chdir("/data/data/com.termux/files/home/myChat/usr/"+self.data["user"])
         self.db=dbLocal("dblocal.db")
         self.db.create_msgTable()
 
