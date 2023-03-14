@@ -114,6 +114,9 @@ class TextWindow:
                 return False
         else:
             return False
+    def insert_str(self,y,x,text):
+        self.__subwin.insstr(y,x,txt)
+
     def __slide_down(self,row):
         if row<0:
             row=0
@@ -122,7 +125,8 @@ class TextWindow:
                 self.__bottom.append(self.__msg[-1-len(self.__bottom)])
                 if len(self.__top)>0:
                     txt=self.__top.pop()
-                    self.__subwin.insstr(row,1,txt)
+                    self.insert_str(row,1,txt)
+#                    self.__subwin.insstr(row,1,txt)
                 self.__scroll-=1
         return row
 
@@ -133,7 +137,8 @@ class TextWindow:
             self.__subwin.scroll(1)
             if self.__bottom:
                 txt=self.__bottom.pop()
-                self.__subwin.insstr(row,1,txt)
+                self.insert_str(row,1,txt)
+#                self.__subwin.insstr(row,1,txt)
             self.__scroll+=1
         return row
 

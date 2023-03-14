@@ -36,6 +36,7 @@ class MainWindow:
         self.win_friend=None
         self.win_output=None
         self.client=Client("./config.json")
+        self.client.bind(self.event_win_output_show_msg)
         signal.signal(signal.SIGINT,self.close)
         
     def create_win_login(self):
@@ -68,7 +69,7 @@ class MainWindow:
         self.win_input.box(".",".")
         self.win_input.addstr(1,0,"intput:")
         self.win_input.bind(self.event_win_input)
-        self.win_input.setEditable(False)
+#        self.win_input.setEditable(False)
 
     def create_win_friend(self):
         '''创建朋友列表窗口'''
@@ -155,10 +156,15 @@ class MainWindow:
         self.root.refresh()
         self.show_win_login()
 
-    def event_win_output_show_msg(self,friend):
+    def event_win_output_show_msg(self,db=None):
         '''输出框接受消息事件'''
-        msg=self.client.getAllMsg(friend)
-        msg=[[x[1],x[-1]] for x in msg]
+        msg=None
+        friend=self.win_friend.getLineText() 
+        if not db:
+            msg=self.client.getAllMsg(friend)
+        else:
+            msg=db.query_friend_msg(friend)
+        msg=[[x[1],x[2]] for x in msg]
         self.win_output.setText(msg)
         
     def event_win_input(self,ch):
@@ -166,8 +172,9 @@ class MainWindow:
         if ch==ascii.ctrl("s"):
             msg=self.win_input.getText()
             friend=self.win_friend.getLineText()
-            self.client.sendMsg(friend,msg)
-            self.win_input.clean()
+            if msg:
+                self.client.sendMsg(friend,msg)
+                self.win_input.clean()
         elif ch==ascii.ctrl("a"):
             self.root.erase()
             self.win_input=self.win_output=self.win_friend=None
@@ -187,11 +194,39 @@ class MainWindow:
         if ch==ascii.ctrl("a"):
             self.win_friend.highlightLine()
 #            y,x=self.win_input.getCursor()
-            self.win_input.setEditable(True)
-            self.event_win_output_show_msg(self.win_friend.getLineText())
+            self.win_input.setEditable(True) 
+            self.event_win_output_show_msg()
         elif ch==ascii.ctrl("d"):
             self.win_friend.unhighlightLine()
             self.win_input.setEditable(False)
+
+    def show_win_login(self):
+        "显示登录窗口"
+        self.create_win_login()
+        self.win_login.ungetmouse()
+        self.refresh_win_login()
+
+    def show_win_register(self):
+        "显示注册界面"
+        self.create_win_register()
+        self.win_register.ungetmouse()
+        self.refresh_win_register()
+
+    def show_win_chat(self,msg,data):
+        "显示聊天界面"
+        self.create_win_head()
+        self.create_win_input()
+        self.create_win_output()
+        self.create_win_friend()
+        self.win_friend.setText(msg["friends"])
+        self.win_friend.highlightLine()
+        self.event_win_output_show_msg()
+        self.win_head.addstr(1,1,"User:"+data["user"])
+        self.win_head.addstr(2,1,"Time:"+datetime.datetime.now().strftime("%Y-%m-%d"))
+        self.refresh_win_head()
+        self.refresh_win_input()
+        self.refresh_win_output()
+        self.refresh_win_right()
 
     def root_event(self):
         '''根窗口事件'''
@@ -227,34 +262,6 @@ class MainWindow:
                         self.win_friend.event(ch)
                     if self.win_output:
                         self.win_output.event(ch)
-
-    def show_win_login(self):
-        "显示登录窗口"
-        self.create_win_login()
-        self.win_login.ungetmouse()
-        self.refresh_win_login()
-
-    def show_win_register(self):
-        "显示注册界面"
-        self.create_win_register()
-        self.win_register.ungetmouse()
-        self.refresh_win_register()
-
-    def show_win_chat(self,msg,data):
-        "显示聊天界面"
-        self.create_win_head()
-        self.create_win_input()
-        self.create_win_output()
-        self.create_win_friend()
-        self.win_friend.setText(msg["friends"])
-        self.win_friend.highlightLine()
-        self.win_head.addstr(1,1,"User:"+data["user"])
-        self.win_head.addstr(2,1,"Time:"+datetime.datetime.now().strftime("%Y-%m-%d"))
-        self.refresh_win_head()
-        self.refresh_win_input()
-        self.refresh_win_output()
-        self.refresh_win_right()
-
 if __name__=="__main__":
     try:
         win=MainWindow()

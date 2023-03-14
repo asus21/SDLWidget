@@ -28,6 +28,9 @@ class Client:
         self.db=dbLocal("dblocal.db")
         self.db.create_msgTable()
 
+    def bind(self,func):
+        self.__bind_func=func
+
     def __error(func):
         def wrapper(self):
             try:
@@ -87,6 +90,8 @@ class Client:
                     break
                 else:
                     db.add_msgData(cmd)
+#                    if self.__bind_func:
+                    self.__bind_func(db)
 
     def sendMsg(self,friend,msg):
         '''发送消息'''
