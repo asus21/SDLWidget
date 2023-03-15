@@ -158,6 +158,8 @@ class MainWindow:
 
     def event_win_output_show_msg(self,db=None):
         '''输出框接受消息事件'''
+        y,x=curses.getsyx()
+        self.win_output.erase()
         msg=None
         friend=self.win_friend.getLineText() 
         if not db:
@@ -166,6 +168,7 @@ class MainWindow:
             msg=db.query_friend_msg(friend)
         msg=[[x[1],x[2]] for x in msg]
         self.win_output.setText(msg)
+        curses.setsyx(y,x)
         
     def event_win_input(self,ch):
         '''输入框事件'''

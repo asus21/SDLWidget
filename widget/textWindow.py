@@ -21,7 +21,7 @@ class TextWindow:
         self.__editable=True
         self.__subWiget=[]
     def erase(self):
-        self.__win.erase()
+#        self.__win.erase()
         self.__subwin.erase()
     def addstr(self,y,x,str):
         self.__win.addstr(y,x,str)
@@ -126,7 +126,6 @@ class TextWindow:
                 if len(self.__top)>0:
                     txt=self.__top.pop()
                     self.insert_str(row,1,txt)
-#                    self.__subwin.insstr(row,1,txt)
                 self.__scroll-=1
         return row
 
@@ -141,6 +140,9 @@ class TextWindow:
 #                self.__subwin.insstr(row,1,txt)
             self.__scroll+=1
         return row
+
+    def move(self,row,col):
+        self.__subwin.move(row,len(self.__msg[row+self.__scroll][:col-1].encode('gbk'))+1)   
 
     def event(self,event):
         curses.curs_set(1)
@@ -269,7 +271,8 @@ class TextWindow:
 #            self.__subwin.addstr(10,0,str(self.__sub_w)
 #            self.__subwin.addstr(1,0,str(len(self.__msg)))
 #            self.__subwin.addstr(10,0,str(row))
-            self.__subwin.move(row,len(self.__msg[row+self.__scroll][:col-1].encode('gbk'))+1)   
+#            self.__subwin.move(row,len(self.__msg[row+self.__scroll][:col-1].encode('gbk'))+1)   
+            self.move(row,col)
             self.__subwin.refresh()
             self.__cur_y=row
             self.__cur_x=col 
