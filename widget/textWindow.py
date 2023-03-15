@@ -1,5 +1,6 @@
 import curses
 from curses import ascii
+from widget import color
 class TextWindow:
     def __init__(self,h,w,y,x):
         self.h,self.w=h,w
@@ -21,7 +22,6 @@ class TextWindow:
         self.__editable=True
         self.__subWiget=[]
     def erase(self):
-#        self.__win.erase()
         self.__subwin.erase()
     def addstr(self,y,x,str):
         self.__win.addstr(y,x,str)
@@ -37,18 +37,14 @@ class TextWindow:
     def highlightLine(self):
         if self.__cur_choose==self.__cur_y:
             y,x=curses.getsyx()
-            curses.init_color(curses.COLOR_RED,1000,0,0)
-            curses.init_pair(4,curses.COLOR_BLACK,curses.COLOR_RED)
-            self.__subwin.addstr(self.__cur_y,1,self.__msg[self.__cur_y],curses.color_pair(4))
+            self.__subwin.addstr(self.__cur_y,1,self.__msg[self.__cur_y],color.Red)
             self.__subwin.refresh()
             curses.setsyx(y,x)
             curses.doupdate()
         else:
             self.unhighlightLine()
             y,x=curses.getsyx()
-            curses.init_color(curses.COLOR_RED,1000,0,0)
-            curses.init_pair(4,curses.COLOR_BLACK,curses.COLOR_RED)
-            self.__subwin.addstr(self.__cur_y,1,self.__msg[self.__cur_y],curses.color_pair(4))
+            self.__subwin.addstr(self.__cur_y,1,self.__msg[self.__cur_y],color.Red)
             self.__subwin.refresh()
             curses.setsyx(y,x)
             curses.doupdate()
@@ -116,7 +112,6 @@ class TextWindow:
             return False
     def insert_str(self,y,x,text):
         self.__subwin.insstr(y,x,txt)
-
     def __slide_down(self,row):
         if row<0:
             row=0
@@ -143,7 +138,6 @@ class TextWindow:
 
     def move(self,row,col):
         self.__subwin.move(row,len(self.__msg[row+self.__scroll][:col-1].encode('gbk'))+1)   
-
     def event(self,event):
         curses.curs_set(1)
         row=self.__cur_y
@@ -187,7 +181,7 @@ class TextWindow:
                         col=1
                     elif col>=len(self.__msg[row+self.__scroll])+1:
                         col=len(self.__msg[row+self.__scroll])+1
-            else:#elif isinstance(event,str)
+            else:
                 if event=="\n":
                     row+=1
                     col=1 

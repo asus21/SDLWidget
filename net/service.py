@@ -55,6 +55,9 @@ class TCPService:
                         if not self.db.is_existsUser(data['user']):
                             msg['result']=False
                             msg['error']=ERROR_NOT_EXITUSER
+                        if self.db.is_existsUserLog(data["user"]):
+                            msg['result']=False
+                            msg["error"]=ERROR_VERIFY_TWICE
                         else:
                             try:
                                 if self.db.query_userPassword(data["user"])==data['password']:

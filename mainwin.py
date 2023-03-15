@@ -16,6 +16,12 @@ from net.client import TCPClient
 from net.client import UDPClient
 from net.client import Client
 locale.setlocale(locale.LC_ALL, '')
+import sys
+import os
+if sys.platform=="win32":
+    res=os.system("pip install windows-curses")
+    if res!=0:
+        sys.exit(1)
 class MainWindow:
     '''主窗口'''
     def __init__(self):
@@ -169,6 +175,7 @@ class MainWindow:
         msg=[[x[1],x[2]] for x in msg]
         self.win_output.setText(msg)
         curses.setsyx(y,x)
+        curses.doupdate()
         
     def event_win_input(self,ch):
         '''输入框事件'''

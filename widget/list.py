@@ -17,9 +17,11 @@ class ListWindow(TextWindow):
             self.__add_recv(y,text[1])
         elif text[0]==1:
             self.__add_send(y,text[1])
+
     def move(self,row,col):
         '''重写父类移动光标方法'''
-        self._TextWindow__subwin.move(row,len(self._TextWindow__msg[row+self._TextWindow__scroll][1][:col-1].encode('gbk'))+1)
+        if isinstance(self._TextWindow__msg[row+self._TextWindow__scroll],list):
+            self._TextWindow__subwin.move(row,len(self._TextWindow__msg[row+self._TextWindow__scroll][1][:col-1].encode('gbk'))+1)
 
     def setText(self,msg):
         '''重写父类设置文本方法'''
